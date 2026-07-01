@@ -2,13 +2,15 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { GroupDetail, SplitMethod } from "@/types";
+import { GroupDetail, ScanReceiptResult, SplitMethod } from "@/types";
 import { getGroupApi } from "@/lib/services/groups.service";
 import { createExpenseApi, SplitParticipant } from "@/lib/services/expenses.service";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import Select from "@/components/Select";
+import CurrencySelect from "@/components/CurrencySelect";
 import SplitMethodSelector from "@/components/expenses/SplitMethodSelector";
+import ReceiptScanner from "@/components/expenses/ReceiptScanner";
 import Spinner from "@/components/Spinner";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -30,10 +32,14 @@ export default function AddExpensePage() {
 
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
-  const [currency] = useState("USD");
+  const [currency, setCurrency] = useState("USD");
   const [paidById, setPaidById] = useState("");
   const [splitMethod, setSplitMethod] = useState<SplitMethod>("EQUAL");
   const [rows, setRows] = useState<ParticipantRow[]>([]);
+
+  // Sprint 3: scan result & FX
+  const [scanResult, setScanResult] = useState<ScanReceiptResult | null>(null);
+  const [fxRate, setFxRate] = useState<number | null>(null);
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -42,6 +48,7 @@ export default function AddExpensePage() {
     getGroupApi(groupId)
       .then((g) => {
         setGroup(g);
+        setCurrency(g.baseCurrency ?? "USD");
         setPaidById(user?.id ?? g.members[0]?.id ?? "");
         setRows(
           g.members.map((m) => ({
@@ -55,6 +62,30 @@ export default function AddExpensePage() {
       })
       .finally(() => setLoadingGroup(false));
   }, [groupId, user?.id]);
+
+  // Fetch live FX rate preview when currency differs from baseCurrency
+  useEffect(() => {
+    const base = group?.baseCurrency ?? "USD";
+    if (!currency || currency === base) {
+      setFxRate(null);
+      return;
+    }
+    const ctrl = new AbortController();
+    fetch(`https://open.er-api.com/v6/latest/${currency}`, { signal: ctrl.signal })
+      .then((r) => r.json())
+      .then((json: { result: string; rates: Record<string, number> }) => {
+        if (json.result === "success") setFxRate(json.rates[base] ?? null);
+      })
+      .catch(() => {});
+    return () => ctrl.abort();
+  }, [currency, group?.baseCurrency]);
+
+  function handleScanResult(result: ScanReceiptResult) {
+    setScanResult(result);
+    setDescription(result.description);
+    setAmount(result.amount > 0 ? result.amount.toFixed(2) : "");
+    setCurrency(result.currency || group?.baseCurrency || "USD");
+  }
 
   const selectedRows = rows.filter((r) => r.selected);
   const totalAmount = parseFloat(amount) || 0;
@@ -121,6 +152,12 @@ export default function AddExpensePage() {
       return { userId: r.userId, value: parseFloat(r.value) };
     });
 
+    const base = group?.baseCurrency ?? "USD";
+    const amountInBase =
+      currency !== base && fxRate !== null
+        ? (parseFloat(amount) * fxRate).toFixed(2)
+        : undefined;
+
     try {
       await createExpenseApi(groupId, {
         description: description.trim(),
@@ -129,6 +166,7 @@ export default function AddExpensePage() {
         paidById,
         splitMethod,
         participants,
+        ...(amountInBase && { amountInBase, exchangeRate: fxRate ?? undefined }),
       });
       router.push(`/groups/${groupId}`);
     } catch (err: unknown) {
@@ -151,11 +189,11 @@ export default function AddExpensePage() {
 
   if (!group) return null;
 
+  const baseCurrency = group.baseCurrency ?? "USD";
   const memberOptions = group.members.map((m) => ({
     value: m.id,
     label: m.name ? `${m.name} (${m.email})` : m.email,
   }));
-
   const needsValueInput = splitMethod !== "EQUAL";
 
   return (
@@ -173,6 +211,26 @@ export default function AddExpensePage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Receipt scanner */}
+        <ReceiptScanner groupId={groupId} onResult={handleScanResult} />
+
+        {/* Scan result preview: line items */}
+        {scanResult && scanResult.lineItems.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-sm p-5">
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+              Detected items
+            </h2>
+            <div className="space-y-1.5">
+              {scanResult.lineItems.map((item, i) => (
+                <div key={i} className="flex justify-between text-sm text-gray-700">
+                  <span>{item.name}</span>
+                  <span className="font-medium">{scanResult.currency} {item.amount.toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Basic details */}
         <div className="bg-white rounded-2xl shadow-sm p-5 space-y-4">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Details</h2>
@@ -182,7 +240,7 @@ export default function AddExpensePage() {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Dinner, groceries, taxi..."
             required
-            autoFocus
+            autoFocus={!scanResult}
           />
           <div className="grid grid-cols-2 gap-4">
             <Input
@@ -195,14 +253,52 @@ export default function AddExpensePage() {
               step="0.01"
               required
             />
-            <Select
-              label="Paid by"
-              value={paidById}
-              onChange={(e) => setPaidById(e.target.value)}
-              options={memberOptions}
-              required
+            <CurrencySelect
+              label="Currency"
+              value={currency}
+              onChange={(newCurrency) => {
+                if (amount && parseFloat(amount) > 0 && newCurrency !== currency) {
+                  // Fetch rate from current → new on every switch so direction doesn't matter
+                  fetch(`https://open.er-api.com/v6/latest/${currency}`)
+                    .then((r) => r.json())
+                    .then((json: { result: string; rates: Record<string, number> }) => {
+                      if (json.result === "success" && json.rates[newCurrency]) {
+                        setAmount((parseFloat(amount) * json.rates[newCurrency]).toFixed(2));
+                      }
+                    })
+                    .catch(() => {});
+                }
+                setCurrency(newCurrency);
+              }}
             />
           </div>
+
+          {/* FX conversion banner */}
+          {currency !== baseCurrency && totalAmount > 0 && (
+            <div className="flex items-center gap-2 text-xs bg-amber-50 border border-amber-200 text-amber-700 rounded-xl px-3 py-2">
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+              {fxRate !== null ? (
+                <span>
+                  {totalAmount.toFixed(2)} {currency} ≈{" "}
+                  <strong>{(totalAmount * fxRate).toFixed(2)} {baseCurrency}</strong>
+                  {" "}(rate: {fxRate.toFixed(4)})
+                </span>
+              ) : (
+                <span>Fetching exchange rate…</span>
+              )}
+            </div>
+          )}
+
+          <Select
+            label="Paid by"
+            value={paidById}
+            onChange={(e) => setPaidById(e.target.value)}
+            options={memberOptions}
+            required
+          />
         </div>
 
         {/* Split method */}
@@ -254,7 +350,7 @@ export default function AddExpensePage() {
                         <span className="text-sm text-gray-400">%</span>
                       )}
                       {splitMethod === "CUSTOM" && (
-                        <span className="text-sm text-gray-400">$</span>
+                        <span className="text-sm text-gray-400">{currency}</span>
                       )}
                       {splitMethod === "SHARES" && (
                         <span className="text-sm text-gray-400">×</span>
@@ -272,7 +368,7 @@ export default function AddExpensePage() {
                   )}
                   {row.selected && !needsValueInput && autoVal && (
                     <span className="text-sm font-medium text-gray-700 flex-shrink-0">
-                      ${autoVal}
+                      {currency} {autoVal}
                     </span>
                   )}
                 </div>
@@ -280,7 +376,6 @@ export default function AddExpensePage() {
             })}
           </div>
 
-          {/* Running total indicator for non-equal methods */}
           {needsValueInput && totalAmount > 0 && (
             <div
               className={`flex items-center justify-between text-sm px-3 py-2 rounded-lg ${
@@ -292,13 +387,13 @@ export default function AddExpensePage() {
               <span>
                 {splitMethod === "PERCENTAGE"
                   ? `Total: ${runningTotal.toFixed(1)}% of 100%`
-                  : `Allocated: $${runningTotal.toFixed(2)} of $${totalAmount.toFixed(2)}`}
+                  : `Allocated: ${currency} ${runningTotal.toFixed(2)} of ${currency} ${totalAmount.toFixed(2)}`}
               </span>
               {Math.abs(remaining) >= 0.01 && (
                 <span className="font-medium">
                   {splitMethod === "PERCENTAGE"
                     ? `${Math.abs(100 - runningTotal).toFixed(1)}% remaining`
-                    : `$${Math.abs(remaining).toFixed(2)} ${remaining > 0 ? "remaining" : "over"}`}
+                    : `${currency} ${Math.abs(remaining).toFixed(2)} ${remaining > 0 ? "remaining" : "over"}`}
                 </span>
               )}
             </div>

@@ -1,10 +1,18 @@
-import { get, post } from "@/lib/api";
-import { Group, GroupDetail } from "@/types";
+import { get, post, patch } from "@/lib/api";
+import { Group, GroupDetail, BalancesResponse, Settlement } from "@/types";
 
 export interface CreateGroupPayload {
   name: string;
   emoji?: string;
   avatarColor?: string;
+  baseCurrency?: string;
+}
+
+export interface UpdateGroupPayload {
+  name?: string;
+  emoji?: string;
+  avatarColor?: string;
+  baseCurrency?: string;
 }
 
 export interface InviteResponse {
@@ -22,6 +30,10 @@ export interface InvitePreview {
 
 export async function createGroupApi(payload: CreateGroupPayload): Promise<Group> {
   return post<Group>("/groups", payload);
+}
+
+export async function updateGroupApi(id: string, payload: UpdateGroupPayload): Promise<Group> {
+  return patch<Group>(`/groups/${id}`, payload);
 }
 
 export async function getGroupsApi(): Promise<Group[]> {
@@ -42,4 +54,19 @@ export async function getInvitePreviewApi(token: string): Promise<InvitePreview>
 
 export async function acceptInviteApi(token: string): Promise<GroupDetail> {
   return post<GroupDetail>(`/groups/invite/${token}/accept`);
+}
+
+export async function getBalancesApi(groupId: string): Promise<BalancesResponse> {
+  return get<BalancesResponse>(`/groups/${groupId}/balances`);
+}
+
+export interface CreateSettlementPayload {
+  toUserId: string;
+  amount: string;
+  currency?: string;
+  note?: string;
+}
+
+export async function createSettlementApi(groupId: string, payload: CreateSettlementPayload): Promise<Settlement> {
+  return post<Settlement>(`/groups/${groupId}/settlements`, payload);
 }

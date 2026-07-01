@@ -6,6 +6,7 @@ import Badge from "@/components/Badge";
 
 interface ExpenseListItemProps {
   expense: Expense;
+  baseCurrency?: string;
   onDelete?: (id: string) => void;
 }
 
@@ -16,11 +17,16 @@ const METHOD_LABELS: Record<string, string> = {
   CUSTOM: "Custom",
 };
 
-export default function ExpenseListItem({ expense, onDelete }: ExpenseListItemProps) {
+export default function ExpenseListItem({ expense, baseCurrency, onDelete }: ExpenseListItemProps) {
   const { user } = useAuth();
   const mySplit = expense.splits.find((s) => s.userId === user?.id);
   const iPaid = expense.paidById === user?.id;
   const paidByName = expense.paidBy.name || expense.paidBy.email.split("@")[0];
+
+  const isCross = baseCurrency && expense.currency !== baseCurrency && !!expense.amountInBase;
+  const scale = isCross
+    ? parseFloat(expense.amountInBase!) / parseFloat(expense.amount)
+    : 1;
 
   return (
     <div className="flex items-start gap-4 py-4 border-b border-gray-50 last:border-0">
@@ -36,20 +42,35 @@ export default function ExpenseListItem({ expense, onDelete }: ExpenseListItemPr
         </p>
         {mySplit && !iPaid && (
           <p className="text-sm text-red-600 font-medium mt-0.5">
-            You owe ${parseFloat(mySplit.amountOwed).toFixed(2)}
+            You owe {expense.currency} {parseFloat(mySplit.amountOwed).toFixed(2)}
+            {isCross && (
+              <span className="text-red-400 font-normal">
+                {" "}(≈ {baseCurrency} {(parseFloat(mySplit.amountOwed) * scale).toFixed(2)})
+              </span>
+            )}
           </p>
         )}
-        {iPaid && myplit(expense, user.id) > 0 && (
+        {iPaid && user && myplit(expense, user.id) > 0 && (
           <p className="text-sm text-green-600 font-medium mt-0.5">
-            Others owe you ${myplit(expense, user.id).toFixed(2)}
+            Others owe you {expense.currency} {myplit(expense, user.id).toFixed(2)}
+            {isCross && (
+              <span className="text-green-400 font-normal">
+                {" "}(≈ {baseCurrency} {(myplit(expense, user.id) * scale).toFixed(2)})
+              </span>
+            )}
           </p>
         )}
       </div>
       <div className="text-right flex-shrink-0">
         <p className="font-semibold text-gray-900">
-          ${parseFloat(expense.amount).toFixed(2)}
+          {parseFloat(expense.amount).toFixed(2)}
         </p>
         <p className="text-xs text-gray-400">{expense.currency}</p>
+        {isCross && (
+          <p className="text-xs text-gray-400">
+            ≈ {baseCurrency} {parseFloat(expense.amountInBase!).toFixed(2)}
+          </p>
+        )}
         {onDelete && (
           <button
             onClick={() => onDelete(expense.id)}

@@ -5,8 +5,8 @@ import Modal from "@/components/Modal";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import CurrencySelect from "@/components/CurrencySelect";
-import { createGroupApi } from "@/lib/services/groups.service";
-import { Group } from "@/types";
+import { updateGroupApi } from "@/lib/services/groups.service";
+import { GroupDetail } from "@/types";
 
 const EMOJIS = ["🍕", "🍺", "🏖️", "🏠", "✈️", "🎉", "🎮", "🏋️", "🚗", "🎸"];
 const COLORS = [
@@ -14,17 +14,23 @@ const COLORS = [
   "#10b981", "#06b6d4", "#f59e0b", "#ef4444",
 ];
 
-interface CreateGroupModalProps {
+interface GroupSettingsModalProps {
   open: boolean;
   onClose: () => void;
-  onCreated: (group: Group) => void;
+  group: GroupDetail;
+  onUpdated: (group: GroupDetail) => void;
 }
 
-export default function CreateGroupModal({ open, onClose, onCreated }: CreateGroupModalProps) {
-  const [name, setName] = useState("");
-  const [emoji, setEmoji] = useState("");
-  const [color, setColor] = useState(COLORS[0]);
-  const [baseCurrency, setBaseCurrency] = useState("USD");
+export default function GroupSettingsModal({
+  open,
+  onClose,
+  group,
+  onUpdated,
+}: GroupSettingsModalProps) {
+  const [name, setName] = useState(group.name);
+  const [emoji, setEmoji] = useState(group.emoji ?? "");
+  const [color, setColor] = useState(group.avatarColor);
+  const [baseCurrency, setBaseCurrency] = useState(group.baseCurrency ?? "USD");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -34,33 +40,35 @@ export default function CreateGroupModal({ open, onClose, onCreated }: CreateGro
     setLoading(true);
     setError("");
     try {
-      const group = await createGroupApi({ name: name.trim(), emoji: emoji || undefined, avatarColor: color, baseCurrency });
-      onCreated(group);
-      setName("");
-      setEmoji("");
-      setColor(COLORS[0]);
-      setBaseCurrency("USD");
+      const updated = await updateGroupApi(group.id, {
+        name: name.trim(),
+        emoji: emoji,   // send empty string so BE sets it to null
+        avatarColor: color,
+        baseCurrency,
+      });
+      // updateGroupApi returns a Group (list shape), merge with GroupDetail
+      onUpdated({ ...group, name: updated.name, emoji: updated.emoji, avatarColor: updated.avatarColor, baseCurrency: updated.baseCurrency });
+      onClose();
     } catch {
-      setError("Failed to create group. Please try again.");
+      setError("Failed to save settings.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Create a group">
+    <Modal open={open} onClose={onClose} title="Group settings">
       <form onSubmit={handleSubmit} className="space-y-5">
         <Input
           label="Group name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Weekend trip, Apartment, Lunch crew..."
           required
           autoFocus
         />
 
         <div>
-          <p className="text-sm font-medium text-gray-700 mb-2">Pick an emoji (optional)</p>
+          <p className="text-sm font-medium text-gray-700 mb-2">Emoji (optional)</p>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -109,6 +117,10 @@ export default function CreateGroupModal({ open, onClose, onCreated }: CreateGro
           onChange={setBaseCurrency}
         />
 
+        <p className="text-xs text-amber-600 bg-amber-50 rounded-lg px-3 py-2">
+          Changing the base currency affects how balances are displayed going forward. Past expenses already converted are not recalculated.
+        </p>
+
         {error && <p className="text-sm text-red-500">{error}</p>}
 
         <div className="flex gap-3 pt-1">
@@ -116,7 +128,7 @@ export default function CreateGroupModal({ open, onClose, onCreated }: CreateGro
             Cancel
           </Button>
           <Button type="submit" loading={loading} className="flex-1">
-            Create group
+            Save changes
           </Button>
         </div>
       </form>
