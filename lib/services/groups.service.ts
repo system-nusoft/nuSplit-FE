@@ -1,4 +1,4 @@
-import { get, post, patch } from "@/lib/api";
+import { get, post, patch, del } from "@/lib/api";
 import { Group, GroupDetail, BalancesResponse, Settlement } from "@/types";
 
 export interface CreateGroupPayload {
@@ -69,4 +69,20 @@ export interface CreateSettlementPayload {
 
 export async function createSettlementApi(groupId: string, payload: CreateSettlementPayload): Promise<Settlement> {
   return post<Settlement>(`/groups/${groupId}/settlements`, payload);
+}
+
+export async function confirmSettlementApi(groupId: string, settlementId: string): Promise<Settlement> {
+  return patch<Settlement>(`/groups/${groupId}/settlements/${settlementId}/confirm`, {});
+}
+
+export async function deleteSettlementApi(groupId: string, settlementId: string): Promise<void> {
+  return del(`/groups/${groupId}/settlements/${settlementId}`);
+}
+
+export async function sendRemindersApi(groupId: string): Promise<{ sent: number }> {
+  return post<{ sent: number }>(`/groups/${groupId}/remind`, {});
+}
+
+export async function removeMemberApi(groupId: string, userId: string): Promise<void> {
+  return del(`/groups/${groupId}/members/${userId}`);
 }

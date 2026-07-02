@@ -2,11 +2,13 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Avatar from "./Avatar";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -38,6 +40,15 @@ export default function Navbar() {
                     </p>
                     <p className="text-xs text-gray-500 truncate">{user.email}</p>
                   </div>
+                  <button
+                    onClick={() => {
+                      setMenuOpen(false);
+                      router.push("/account");
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    Account settings
+                  </button>
                   <button
                     onClick={async () => {
                       setMenuOpen(false);

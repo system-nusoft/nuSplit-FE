@@ -6,6 +6,7 @@ import { useAuth, updateMeApi } from "@/contexts/AuthContext";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
+import PhoneInput from "@/components/PhoneInput";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -50,19 +51,31 @@ export default function OnboardingPage() {
               placeholder="How should others see you?"
               autoFocus
             />
-            <Input
+
+            <PhoneInput
               label="Phone number (optional)"
-              type="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+1 555 000 0000"
-              hint="Used for WhatsApp reminder nudges in a future update."
+              onChange={setPhone}
             />
+
+            {/* Privacy notice */}
+            <div className="flex gap-2.5 bg-indigo-50 rounded-xl px-3.5 py-3">
+              <svg className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              <p className="text-xs text-indigo-600 leading-relaxed">
+                Your phone number is only used so group members can send you WhatsApp payment reminders.
+                It is never shared with third parties or used for marketing.
+              </p>
+            </div>
+
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-3 py-2">
                 {error}
               </div>
             )}
+
             <Button type="submit" fullWidth loading={loading} size="lg">
               Let&apos;s go
             </Button>

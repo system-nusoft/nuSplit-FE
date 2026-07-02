@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { GroupDetail, Expense, PaginatedResponse, BalancesResponse, Settlement } from "@/types";
-import { getGroupApi, createInviteApi, getBalancesApi } from "@/lib/services/groups.service";
+import { getGroupApi, createInviteApi, getBalancesApi, removeMemberApi } from "@/lib/services/groups.service";
 import { getExpensesApi, deleteExpenseApi } from "@/lib/services/expenses.service";
 import ExpenseListItem from "@/components/expenses/ExpenseListItem";
 import SettlementListItem from "@/components/expenses/SettlementListItem";
@@ -37,10 +38,12 @@ function buildTimeline(expenses: Expense[], settlements: Settlement[]): Timeline
 export default function GroupDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const router = useRouter();
   const [group, setGroup] = useState<GroupDetail | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   const [expenses, setExpenses] = useState<PaginatedResponse<Expense> | null>(null);
   const [balances, setBalances] = useState<BalancesResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -113,6 +116,23 @@ export default function GroupDetailPage() {
     }
   }
 
+  function handleMemberRemoved(memberId: string) {
+    setGroup((prev) =>
+      prev ? { ...prev, members: prev.members.filter((m) => m.id !== memberId) } : prev
+    );
+  }
+
+  async function handleLeaveGroup() {
+    if (!user) return;
+    setLeaving(true);
+    try {
+      await removeMemberApi(id, user.id);
+      router.push("/groups");
+    } finally {
+      setLeaving(false);
+    }
+  }
+
   const inviteUrl = inviteToken
     ? `${typeof window !== "undefined" ? window.location.origin : ""}/invite/${inviteToken}`
     : "";
@@ -141,6 +161,17 @@ export default function GroupDetailPage() {
 
   return (
     <div className="space-y-6">
+      {/* Back button */}
+      <button
+        onClick={() => router.push("/groups")}
+        className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors"
+      >
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        Groups
+      </button>
+
       {/* Header */}
       <div className="flex items-start gap-4">
         <div
@@ -180,9 +211,20 @@ export default function GroupDetailPage() {
 
       {/* Members */}
       <Card padding="md">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-          Members · {group.members.length}
-        </h2>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+            Members · {group.members.length}
+          </h2>
+          {group.createdById !== user?.id && (
+            <button
+              onClick={handleLeaveGroup}
+              disabled={leaving}
+              className="text-xs text-red-400 hover:text-red-600 transition-colors disabled:opacity-50"
+            >
+              {leaving ? "Leaving…" : "Leave group"}
+            </button>
+          )}
+        </div>
         <div className="space-y-2">
           {group.members.map((m) => (
             <div key={m.id} className="flex items-center gap-3">
@@ -203,6 +245,7 @@ export default function GroupDetailPage() {
         <BalancesCard
           balances={balances}
           groupId={id}
+          groupName={group.name}
           baseCurrency={group.baseCurrency ?? "USD"}
           onSettled={refreshBalances}
         />
@@ -243,7 +286,12 @@ export default function GroupDetailPage() {
                   <ExpenseComments groupId={id} expenseId={item.data.id} />
                 </div>
               ) : (
-                <SettlementListItem key={`settlement-${item.data.id}`} settlement={item.data} />
+                <SettlementListItem
+                  key={`settlement-${item.data.id}`}
+                  settlement={item.data}
+                  groupId={id}
+                  onUpdated={refreshBalances}
+                />
               )
             )}
             {hasMoreExpenses && (
@@ -274,7 +322,9 @@ export default function GroupDetailPage() {
           open={showSettings}
           onClose={() => setShowSettings(false)}
           group={group}
+          currentUserId={user?.id ?? ""}
           onUpdated={(updated) => setGroup(updated)}
+          onMemberRemoved={handleMemberRemoved}
         />
       )}
 

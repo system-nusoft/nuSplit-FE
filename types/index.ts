@@ -92,10 +92,14 @@ export interface MemberBalance {
 export interface SimplifiedTransaction {
   fromUserId: string;
   fromName: string;
+  fromPhone?: string | null;
   toUserId: string;
   toName: string;
+  toPhone?: string | null;
   amount: number;
 }
+
+export type SettlementStatus = "PENDING" | "CONFIRMED";
 
 export interface Settlement {
   id: string;
@@ -105,8 +109,10 @@ export interface Settlement {
   toName: string;
   amount: string;
   currency: string;
+  status: SettlementStatus;
   note?: string;
   createdAt: string;
+  confirmedAt?: string;
 }
 
 export interface BalancesResponse {
