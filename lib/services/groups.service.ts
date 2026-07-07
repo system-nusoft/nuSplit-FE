@@ -86,3 +86,7 @@ export async function sendRemindersApi(groupId: string): Promise<{ sent: number 
 export async function removeMemberApi(groupId: string, userId: string): Promise<void> {
   return del(`/groups/${groupId}/members/${userId}`);
 }
+
+export async function deleteGroupApi(groupId: string): Promise<void> {
+  return del(`/groups/${groupId}`);
+}

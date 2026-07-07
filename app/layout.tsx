@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "nuSplit — Split bills smartly",
+  title: "Squarr — Split bills smartly",
   description:
     "Split bills smartly, no awkward conversations. Add a shared bill, calculate who owes what, and settle up.",
 };

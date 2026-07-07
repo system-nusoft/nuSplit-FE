@@ -15,7 +15,7 @@ export default function Navbar() {
     <nav className="bg-white border-b border-gray-100 sticky top-0 z-40">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         <Link href="/groups" className="flex items-center gap-2">
-          <span className="text-lg font-bold text-indigo-600">nuSplit</span>
+          <span className="text-lg font-bold text-indigo-600">Squarr</span>
         </Link>
 
         {user && (

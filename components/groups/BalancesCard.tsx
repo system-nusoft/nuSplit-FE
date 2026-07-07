@@ -36,7 +36,7 @@ export default function BalancesCard({ balances, groupId, groupName, baseCurrenc
   }
 
   function whatsappNudge(tx: SimplifiedTransaction) {
-    const text = `Hi ${tx.fromName}, just a reminder that you owe me ${baseCurrency} ${tx.amount.toFixed(2)} in "${groupName}" on nuSplit.`;
+    const text = `Hi ${tx.fromName}, just a reminder that you owe me ${baseCurrency} ${tx.amount.toFixed(2)} in "${groupName}" on Squarr.`;
     const phone = tx.fromPhone?.replace(/\D/g, "");
     const url = phone
       ? `https://wa.me/${phone}?text=${encodeURIComponent(text)}`

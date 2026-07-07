@@ -38,7 +38,7 @@ export default function OnboardingPage() {
           <div className="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <span className="text-3xl">🎉</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Welcome to nuSplit!</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Welcome to Squarr!</h1>
           <p className="text-gray-500 text-sm mt-1">Just a couple of quick things to set you up.</p>
         </div>
 

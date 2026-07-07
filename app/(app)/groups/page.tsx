@@ -54,7 +54,7 @@ export default function GroupsPage() {
           <Button onClick={() => setShowCreate(true)}>Create your first group</Button>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="flex flex-col gap-4">
           {groups.map((g) => (
             <GroupCard key={g.id} group={g} />
           ))}

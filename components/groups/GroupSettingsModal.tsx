@@ -5,7 +5,7 @@ import Modal from "@/components/Modal";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import CurrencySelect from "@/components/CurrencySelect";
-import { updateGroupApi, removeMemberApi } from "@/lib/services/groups.service";
+import { updateGroupApi, removeMemberApi, deleteGroupApi } from "@/lib/services/groups.service";
 import { GroupDetail } from "@/types";
 
 const EMOJIS = ["🍕", "🍺", "🏖️", "🏠", "✈️", "🎉", "🎮", "🏋️", "🚗", "🎸"];
@@ -21,6 +21,7 @@ interface GroupSettingsModalProps {
   currentUserId: string;
   onUpdated: (group: GroupDetail) => void;
   onMemberRemoved: (userId: string) => void;
+  onDeleted?: () => void;
 }
 
 export default function GroupSettingsModal({
@@ -30,6 +31,7 @@ export default function GroupSettingsModal({
   currentUserId,
   onUpdated,
   onMemberRemoved,
+  onDeleted,
 }: GroupSettingsModalProps) {
   const [name, setName] = useState(group.name);
   const [emoji, setEmoji] = useState(group.emoji ?? "");
@@ -38,6 +40,9 @@ export default function GroupSettingsModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [removingId, setRemovingId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const isCreator = group.createdById === currentUserId;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -70,6 +75,19 @@ export default function GroupSettingsModal({
       setError("Failed to remove member.");
     } finally {
       setRemovingId(null);
+    }
+  }
+
+  async function handleDelete() {
+    setDeleting(true);
+    try {
+      await deleteGroupApi(group.id);
+      onClose();
+      onDeleted?.();
+    } catch {
+      setError("Failed to delete group.");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -181,6 +199,42 @@ export default function GroupSettingsModal({
             Save changes
           </Button>
         </div>
+
+        {isCreator && (
+          <div className="border-t border-gray-100 pt-4 mt-2">
+            {!showDeleteConfirm ? (
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(true)}
+                className="text-sm text-red-500 hover:text-red-700 transition-colors"
+              >
+                Delete group
+              </button>
+            ) : (
+              <div className="bg-red-50 rounded-xl p-4 space-y-3">
+                <p className="text-sm text-red-700 font-medium">Delete &quot;{group.name}&quot;?</p>
+                <p className="text-xs text-red-500">This will permanently delete all expenses, settlements, and members. This cannot be undone.</p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowDeleteConfirm(false)}
+                    className="flex-1 text-sm py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    disabled={deleting}
+                    className="flex-1 text-sm py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50"
+                  >
+                    {deleting ? "Deleting…" : "Yes, delete"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </form>
     </Modal>
   );

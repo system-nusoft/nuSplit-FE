@@ -325,6 +325,7 @@ export default function GroupDetailPage() {
           currentUserId={user?.id ?? ""}
           onUpdated={(updated) => setGroup(updated)}
           onMemberRemoved={handleMemberRemoved}
+          onDeleted={() => router.push("/groups")}
         />
       )}
 

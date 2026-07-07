@@ -1,8 +1,8 @@
 import { User } from "@/types";
 
-const ACCESS_TOKEN_KEY = "nusplit_access_token";
-const REFRESH_TOKEN_KEY = "nusplit_refresh_token";
-const USER_KEY = "nusplit_user";
+const ACCESS_TOKEN_KEY = "squarr_access_token";
+const REFRESH_TOKEN_KEY = "squarr_refresh_token";
+const USER_KEY = "squarr_user";
 
 export function getAccessToken(): string | null {
   if (typeof window === "undefined") return null;

@@ -10,7 +10,7 @@ interface GroupCardProps {
 
 export default function GroupCard({ group }: GroupCardProps) {
   return (
-    <Link href={`/groups/${group.id}`}>
+    <Link href={`/groups/${group.id}`} className="block">
       <Card className="hover:shadow-md transition-shadow">
         <div className="flex items-center gap-4">
           <div
