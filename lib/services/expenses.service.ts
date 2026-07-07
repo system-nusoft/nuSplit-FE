@@ -43,6 +43,10 @@ export async function deleteExpenseApi(groupId: string, expenseId: string): Prom
   return del<void>(`/groups/${groupId}/expenses/${expenseId}`);
 }
 
+export async function sendExpenseReminderApi(groupId: string, expenseId: string): Promise<{ sent: number }> {
+  return post<{ sent: number }>(`/groups/${groupId}/expenses/${expenseId}/remind`, {});
+}
+
 export async function scanReceiptApi(groupId: string, file: File): Promise<ScanReceiptResult> {
   const form = new FormData();
   form.append("receipt", file);
