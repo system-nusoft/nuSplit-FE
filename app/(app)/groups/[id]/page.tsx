@@ -159,6 +159,44 @@ export default function GroupDetailPage() {
   );
   const hasMoreExpenses = expenses && expenses.data.length < expenses.total;
 
+  // Greedy per-expense settled computation (oldest first) — mirrors mobile logic
+  const confirmedPaidTo = new Map<string, number>();
+  const confirmedReceivedFrom = new Map<string, number>();
+  for (const s of (balances?.settlements ?? [])) {
+    if (s.status !== 'CONFIRMED') continue;
+    if (s.fromUserId === user?.id)
+      confirmedPaidTo.set(s.toUserId, (confirmedPaidTo.get(s.toUserId) ?? 0) + parseFloat(s.amount));
+    if (s.toUserId === user?.id)
+      confirmedReceivedFrom.set(s.fromUserId, (confirmedReceivedFrom.get(s.fromUserId) ?? 0) + parseFloat(s.amount));
+  }
+  const debtorBudget = new Map(confirmedPaidTo);
+  const creditorBudget = new Map(confirmedReceivedFrom);
+  const settledExpenseIds = new Set<string>();
+  const sortedExpenses = [...(expenses?.data ?? [])].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  );
+  for (const exp of sortedExpenses) {
+    if (exp.paidById !== user?.id) {
+      const myS = exp.splits.find(s => s.userId === user?.id);
+      if (!myS) continue;
+      const owed = parseFloat(myS.amountOwed);
+      const budget = debtorBudget.get(exp.paidById) ?? 0;
+      if (budget >= owed - 0.01) {
+        settledExpenseIds.add(exp.id);
+        debtorBudget.set(exp.paidById, budget - owed);
+      }
+    } else {
+      const others = exp.splits.filter(s => s.userId !== user?.id);
+      if (others.length === 0) { settledExpenseIds.add(exp.id); continue; }
+      const allCovered = others.every(s => (creditorBudget.get(s.userId) ?? 0) >= parseFloat(s.amountOwed) - 0.01);
+      if (allCovered) {
+        settledExpenseIds.add(exp.id);
+        for (const s of others)
+          creditorBudget.set(s.userId, (creditorBudget.get(s.userId) ?? 0) - parseFloat(s.amountOwed));
+      }
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Back button */}
@@ -281,7 +319,8 @@ export default function GroupDetailPage() {
                   <ExpenseListItem
                     expense={item.data}
                     baseCurrency={group.baseCurrency}
-                    onDelete={handleDeleteExpense}
+                    onDelete={item.data.paidById === user?.id ? handleDeleteExpense : undefined}
+                    isSettled={settledExpenseIds.has(item.data.id)}
                   />
                   <ExpenseComments groupId={id} expenseId={item.data.id} />
                 </div>

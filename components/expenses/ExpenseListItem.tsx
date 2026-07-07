@@ -8,6 +8,7 @@ interface ExpenseListItemProps {
   expense: Expense;
   baseCurrency?: string;
   onDelete?: (id: string) => void;
+  isSettled?: boolean;
 }
 
 const METHOD_LABELS: Record<string, string> = {
@@ -17,7 +18,7 @@ const METHOD_LABELS: Record<string, string> = {
   CUSTOM: "Custom",
 };
 
-export default function ExpenseListItem({ expense, baseCurrency, onDelete }: ExpenseListItemProps) {
+export default function ExpenseListItem({ expense, baseCurrency, onDelete, isSettled }: ExpenseListItemProps) {
   const { user } = useAuth();
   const mySplit = expense.splits.find((s) => s.userId === user?.id);
   const iPaid = expense.paidById === user?.id;
@@ -29,7 +30,7 @@ export default function ExpenseListItem({ expense, baseCurrency, onDelete }: Exp
     : 1;
 
   return (
-    <div className="flex items-start gap-4 py-4 border-b border-gray-50 last:border-0">
+    <div className={`flex items-start gap-4 py-4 border-b border-gray-50 last:border-0 rounded-xl px-3 -mx-3 ${isSettled ? 'bg-green-50' : ''}`}>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
           <p className="font-medium text-gray-900 truncate">{expense.description}</p>
@@ -40,25 +41,31 @@ export default function ExpenseListItem({ expense, baseCurrency, onDelete }: Exp
           {" · "}
           {new Date(expense.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
         </p>
-        {mySplit && !iPaid && (
-          <p className="text-sm text-red-600 font-medium mt-0.5">
-            You owe {expense.currency} {parseFloat(mySplit.amountOwed).toFixed(2)}
-            {isCross && (
-              <span className="text-red-400 font-normal">
-                {" "}(≈ {baseCurrency} {(parseFloat(mySplit.amountOwed) * scale).toFixed(2)})
-              </span>
+        {isSettled ? (
+          <p className="text-sm text-green-600 font-medium mt-0.5">✓ Settled</p>
+        ) : (
+          <>
+            {mySplit && !iPaid && (
+              <p className="text-sm text-red-600 font-medium mt-0.5">
+                You owe {expense.currency} {parseFloat(mySplit.amountOwed).toFixed(2)}
+                {isCross && (
+                  <span className="text-red-400 font-normal">
+                    {" "}(≈ {baseCurrency} {(parseFloat(mySplit.amountOwed) * scale).toFixed(2)})
+                  </span>
+                )}
+              </p>
             )}
-          </p>
-        )}
-        {iPaid && user && myplit(expense, user.id) > 0 && (
-          <p className="text-sm text-green-600 font-medium mt-0.5">
-            Others owe you {expense.currency} {myplit(expense, user.id).toFixed(2)}
-            {isCross && (
-              <span className="text-green-400 font-normal">
-                {" "}(≈ {baseCurrency} {(myplit(expense, user.id) * scale).toFixed(2)})
-              </span>
+            {iPaid && user && myplit(expense, user.id) > 0 && (
+              <p className="text-sm text-green-600 font-medium mt-0.5">
+                Others owe you {expense.currency} {myplit(expense, user.id).toFixed(2)}
+                {isCross && (
+                  <span className="text-green-400 font-normal">
+                    {" "}(≈ {baseCurrency} {(myplit(expense, user.id) * scale).toFixed(2)})
+                  </span>
+                )}
+              </p>
             )}
-          </p>
+          </>
         )}
       </div>
       <div className="text-right flex-shrink-0">
