@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { GroupDetail, Expense, PaginatedResponse, BalancesResponse, Settlement } from "@/types";
 import { getGroupApi, createInviteApi, getBalancesApi, removeMemberApi } from "@/lib/services/groups.service";
-import { getExpensesApi, deleteExpenseApi } from "@/lib/services/expenses.service";
+import { getExpensesApi, deleteExpenseApi, sendExpenseReminderApi } from "@/lib/services/expenses.service";
 import ExpenseListItem from "@/components/expenses/ExpenseListItem";
 import SettlementListItem from "@/components/expenses/SettlementListItem";
 import ExpenseComments from "@/components/expenses/ExpenseComments";
@@ -97,6 +97,15 @@ export default function GroupDetailPage() {
 
   async function handleDeleteExpense(expenseId: string) {
     setDeleteTarget(expenseId);
+  }
+
+  async function handleRemindExpense(expenseId: string) {
+    try {
+      const { sent } = await sendExpenseReminderApi(id, expenseId);
+      alert(sent > 0 ? `Reminder sent to ${sent} member${sent > 1 ? "s" : ""}.` : "No reminders to send.");
+    } catch {
+      alert("Failed to send reminder.");
+    }
   }
 
   async function confirmDeleteExpense() {
@@ -320,6 +329,7 @@ export default function GroupDetailPage() {
                     expense={item.data}
                     baseCurrency={group.baseCurrency}
                     onDelete={item.data.paidById === user?.id ? handleDeleteExpense : undefined}
+                    onRemind={item.data.paidById === user?.id ? handleRemindExpense : undefined}
                     isSettled={settledExpenseIds.has(item.data.id)}
                   />
                   <ExpenseComments groupId={id} expenseId={item.data.id} />
