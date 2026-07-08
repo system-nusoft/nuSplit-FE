@@ -16,7 +16,7 @@ export default function Navbar() {
     <nav className="bg-white border-b border-gray-100 sticky top-0 z-40">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         <Link href="/groups" className="flex items-center">
-          <Image src="/logo-with-name.png" alt="Squarr" width={110} height={36} className="object-contain" />
+          <Image src="/logo-with-name.png" alt="Squarr" width={1421} height={550} className="h-9 w-auto" style={{ width: 'auto' }} />
         </Link>
 
         {user && (
