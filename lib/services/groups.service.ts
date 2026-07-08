@@ -83,6 +83,10 @@ export async function sendRemindersApi(groupId: string): Promise<{ sent: number 
   return post<{ sent: number }>(`/groups/${groupId}/remind`, {});
 }
 
+export async function getBalanceOverviewApi(): Promise<{ payable: Record<string, number>; receivable: Record<string, number> }> {
+  return get<{ payable: Record<string, number>; receivable: Record<string, number> }>('/groups/balance-overview');
+}
+
 export async function removeMemberApi(groupId: string, userId: string): Promise<void> {
   return del(`/groups/${groupId}/members/${userId}`);
 }
