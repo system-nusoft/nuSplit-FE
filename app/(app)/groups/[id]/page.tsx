@@ -285,6 +285,15 @@ export default function GroupDetailPage() {
             </div>
           ))}
         </div>
+        {group.members.length === 1 && (
+          <div className="mt-4 rounded-xl bg-indigo-50 border border-indigo-100 p-4 text-center">
+            <p className="text-sm font-semibold text-gray-700 mb-1">Invite your group</p>
+            <p className="text-xs text-gray-400 mb-3">Share a link so others can join and split expenses with you.</p>
+            <Button variant="primary" size="sm" onClick={handleInvite} loading={inviteLoading}>
+              Share invite link
+            </Button>
+          </div>
+        )}
       </Card>
 
       {/* Balances */}
