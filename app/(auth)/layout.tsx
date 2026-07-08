@@ -17,7 +17,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           </Link>
         </div>
         <div className="flex flex-col items-center mb-8">
-          <Image src="/logo-with-name.png" alt="Squarr" width={160} height={52} className="object-contain mb-2" />
+          <Image src="/logo-with-name.png" alt="Squarr" width={1421} height={550} className="h-12 w-auto mb-2" style={{ width: 'auto' }} />
           <p className="text-gray-500 text-sm">Split bills smartly, no awkward conversations.</p>
         </div>
         {children}

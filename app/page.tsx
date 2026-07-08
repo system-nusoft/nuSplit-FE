@@ -45,7 +45,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-white">
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
-        <Image src="/logo-with-name.png" alt="Squarr" width={120} height={40} className="object-contain" />
+        <Image src="/logo-with-name.png" alt="Squarr" width={1421} height={550} className="h-10 w-auto" style={{ width: 'auto' }} />
         <Link
           href="/signup"
           className="text-sm font-semibold bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition-colors"
@@ -79,7 +79,7 @@ export default function LandingPage() {
             Squarr makes shared expenses effortless. Scan a receipt, split it your way,
             and settle up — with AI that does the heavy lifting.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
             <Link
               href="/signup"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-indigo-700 font-bold px-8 py-3.5 rounded-2xl hover:bg-indigo-50 transition-colors text-base shadow-lg"
@@ -93,6 +93,19 @@ export default function LandingPage() {
             >
               Sign in
             </Link>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-xsms font-medium text-white mt-2">Download the app</span>
+            <div className="flex items-center gap-3 mt-2">
+              <button disabled className="cursor-not-allowed">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/app-store.svg" alt="Download on the App Store" className="h-10 w-auto" />
+              </button>
+              <button disabled className="bg-white rounded-md cursor-not-allowed">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/google-play.webp" alt="Get it on Google Play" className="h-10 w-auto" />
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -167,7 +180,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-gray-100 py-8">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-400">
-          <Image src="/logo-with-name.png" alt="Squarr" width={80} height={26} className="object-contain" />
+          <Image src="/logo-with-name.png" alt="Squarr" width={1421} height={550} className="h-7 w-auto" style={{ width: 'auto' }} />
           <span>© {new Date().getFullYear()} nusoft. All rights reserved.</span>
           <div className="flex gap-4">
             <Link href="/login" className="hover:text-gray-600 transition-colors">Sign in</Link>
