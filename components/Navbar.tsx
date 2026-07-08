@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Avatar from "./Avatar";
@@ -14,8 +15,8 @@ export default function Navbar() {
   return (
     <nav className="bg-white border-b border-gray-100 sticky top-0 z-40">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-        <Link href="/groups" className="flex items-center gap-2">
-          <span className="text-lg font-bold text-indigo-600">Squarr</span>
+        <Link href="/groups" className="flex items-center">
+          <Image src="/logo-with-name.png" alt="Squarr" width={110} height={36} className="object-contain" />
         </Link>
 
         {user && (

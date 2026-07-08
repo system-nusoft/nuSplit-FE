@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const features = [
   {
@@ -44,21 +45,13 @@ export default function LandingPage() {
     <div className="min-h-screen bg-white">
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
-        <span className="text-xl font-bold text-indigo-600 tracking-tight">Squarr</span>
-        <div className="flex items-center gap-3">
-          <Link
-            href="/login"
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/signup"
-            className="text-sm font-semibold bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition-colors"
-          >
-            Get started
-          </Link>
-        </div>
+        <Image src="/logo-with-name.png" alt="Squarr" width={120} height={40} className="object-contain" />
+        <Link
+          href="/signup"
+          className="text-sm font-semibold bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition-colors"
+        >
+          Get started
+        </Link>
       </nav>
 
       {/* Hero */}
@@ -91,7 +84,7 @@ export default function LandingPage() {
               href="/signup"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-indigo-700 font-bold px-8 py-3.5 rounded-2xl hover:bg-indigo-50 transition-colors text-base shadow-lg"
             >
-              Test it out — it&apos;s free
+              Test it out
               <span>→</span>
             </Link>
             <Link
@@ -105,20 +98,33 @@ export default function LandingPage() {
       </section>
 
       {/* Problem */}
-      <section className="max-w-3xl mx-auto px-6 py-20 text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">Sound familiar?</h2>
-        <p className="text-gray-500 text-lg leading-relaxed">
-          Someone pays for dinner, someone else covers the Uber, and by the end of the trip no one
-          knows who owes who. Spreadsheets get messy. Chasing people is awkward. Most apps make
-          it complicated.
-        </p>
-        <p className="text-indigo-600 font-semibold text-lg mt-6">
-          Squarr fixes all of that — in seconds.
-        </p>
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <p className="text-indigo-500 text-sm font-semibold uppercase tracking-widest mb-4">The struggle is real</p>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-12">Sound familiar?</h2>
+          <div className="flex flex-col gap-4 mb-12">
+            {[
+              { emoji: "😬", text: "\"Who paid for the Airbnb again?\"" },
+              { emoji: "😅", text: "\"I'll Venmo you later\" — they never do." },
+              { emoji: "🤯", text: "\"Wait, do I owe you or do you owe me?\"" },
+              { emoji: "😤", text: "\"Can everyone just settle up already?\"" },
+            ].map(({ emoji, text }) => (
+              <div key={text} className="flex items-center gap-4 bg-white border border-gray-200 rounded-2xl px-5 py-4 text-left shadow-sm">
+                <span className="text-2xl flex-shrink-0">{emoji}</span>
+                <p className="text-gray-600 text-base italic">{text}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-2xl font-bold text-gray-900">
+            Squarr makes all of this{" "}
+            <span className="text-purple-400 line-through">awkward</span>
+            {" "}disappear.
+          </p>
+        </div>
       </section>
 
       {/* Features */}
-      <section className="bg-gray-50 py-20">
+      <section className="bg-blue-100 py-20">
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold text-gray-900 mb-3">Everything you need. Nothing you don&apos;t.</h2>
@@ -161,7 +167,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-gray-100 py-8">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-400">
-          <span className="font-semibold text-gray-600">Squarr</span>
+          <Image src="/logo-with-name.png" alt="Squarr" width={80} height={26} className="object-contain" />
           <span>© {new Date().getFullYear()} nusoft. All rights reserved.</span>
           <div className="flex gap-4">
             <Link href="/login" className="hover:text-gray-600 transition-colors">Sign in</Link>
