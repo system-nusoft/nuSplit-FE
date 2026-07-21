@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Comment } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { getCommentsApi, createCommentApi, deleteCommentApi } from "@/lib/services/expenses.service";
@@ -12,6 +14,8 @@ interface ExpenseCommentsProps {
 }
 
 export default function ExpenseComments({ groupId, expenseId }: ExpenseCommentsProps) {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -61,7 +65,7 @@ export default function ExpenseComments({ groupId, expenseId }: ExpenseCommentsP
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
             d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
         </svg>
-        {open ? "Hide comments" : `Comments${comments.length > 0 ? ` (${comments.length})` : ""}`}
+        {open ? t("comments.hide") : comments.length > 0 ? t("comments.showCount", { count: comments.length }) : t("comments.show")}
       </button>
 
       {open && (
@@ -69,7 +73,7 @@ export default function ExpenseComments({ groupId, expenseId }: ExpenseCommentsP
           {loading ? (
             <Spinner size="sm" className="text-indigo-400" />
           ) : comments.length === 0 ? (
-            <p className="text-xs text-gray-400">No comments yet.</p>
+            <p className="text-xs text-gray-400">{t("comments.empty")}</p>
           ) : (
             comments.map((c) => {
               const isMe = c.userId === user?.id;
@@ -81,9 +85,9 @@ export default function ExpenseComments({ groupId, expenseId }: ExpenseCommentsP
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-baseline gap-1.5">
-                      <span className="text-xs font-semibold text-gray-800">{isMe ? "You" : name}</span>
+                      <span className="text-xs font-semibold text-gray-800">{isMe ? t("settlementItem.you") : name}</span>
                       <span className="text-xs text-gray-400">
-                        {new Date(c.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                        {new Date(c.createdAt).toLocaleDateString(language, { month: "short", day: "numeric" })}
                       </span>
                     </div>
                     <p className="text-xs text-gray-700 break-words">{c.body}</p>
@@ -105,7 +109,7 @@ export default function ExpenseComments({ groupId, expenseId }: ExpenseCommentsP
             <input
               value={body}
               onChange={(e) => setBody(e.target.value)}
-              placeholder="Add a comment…"
+              placeholder={t("comments.placeholder")}
               className="flex-1 text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-400 placeholder-gray-400"
             />
             <button
@@ -113,7 +117,7 @@ export default function ExpenseComments({ groupId, expenseId }: ExpenseCommentsP
               disabled={submitting || !body.trim()}
               className="text-xs bg-indigo-600 text-white rounded-lg px-3 py-1.5 font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {submitting ? "…" : "Post"}
+              {submitting ? t("comments.posting") : t("comments.post")}
             </button>
           </form>
         </div>

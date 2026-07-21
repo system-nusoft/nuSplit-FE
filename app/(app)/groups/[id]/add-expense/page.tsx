@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { GroupDetail, ScanReceiptResult, SplitMethod } from "@/types";
 import { getGroupApi } from "@/lib/services/groups.service";
 import { createExpenseApi, SplitParticipant } from "@/lib/services/expenses.service";
@@ -23,6 +24,7 @@ interface ParticipantRow {
 }
 
 export default function AddExpensePage() {
+  const { t } = useTranslation();
   const { id: groupId } = useParams<{ id: string }>();
   const router = useRouter();
   const { user } = useAuth();
@@ -111,22 +113,22 @@ export default function AddExpensePage() {
   const remaining = totalAmount - runningTotal;
 
   const validationError = useMemo(() => {
-    if (selectedRows.length === 0) return "Select at least one participant.";
+    if (selectedRows.length === 0) return t("addExpense.errorSelectParticipant");
     if (splitMethod === "PERCENTAGE") {
       const sum = selectedRows.reduce((s, r) => s + (parseFloat(r.value) || 0), 0);
-      if (Math.abs(sum - 100) > 0.01) return `Percentages must sum to 100 (currently ${sum.toFixed(1)}%).`;
+      if (Math.abs(sum - 100) > 0.01) return t("addExpense.errorPercentSum", { sum: sum.toFixed(1) });
     }
     if (splitMethod === "CUSTOM") {
       const sum = selectedRows.reduce((s, r) => s + (parseFloat(r.value) || 0), 0);
       if (Math.abs(sum - totalAmount) > 0.005)
-        return `Custom amounts must sum to $${totalAmount.toFixed(2)} (currently $${sum.toFixed(2)}).`;
+        return t("addExpense.errorCustomSum", { total: totalAmount.toFixed(2), sum: sum.toFixed(2) });
     }
     if (splitMethod === "SHARES") {
       if (selectedRows.some((r) => !r.value || parseFloat(r.value) <= 0))
-        return "All share values must be greater than 0.";
+        return t("addExpense.errorSharesPositive");
     }
     return null;
-  }, [splitMethod, selectedRows, totalAmount]);
+  }, [splitMethod, selectedRows, totalAmount, t]);
 
   function updateRow(userId: string, field: keyof ParticipantRow, value: string | boolean) {
     setRows((prev) =>
@@ -172,8 +174,8 @@ export default function AddExpensePage() {
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        "Failed to add expense.";
-      setError(typeof msg === "string" ? msg : "Failed to add expense.");
+        t("addExpense.errorAddExpense");
+      setError(typeof msg === "string" ? msg : t("addExpense.errorAddExpense"));
     } finally {
       setSaving(false);
     }
@@ -203,11 +205,11 @@ export default function AddExpensePage() {
           onClick={() => router.back()}
           className="text-gray-400 hover:text-gray-600 transition-colors"
         >
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-6 h-6 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
         </button>
-        <h1 className="text-2xl font-bold text-gray-900">Add expense</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t("addExpense.title")}</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -218,7 +220,7 @@ export default function AddExpensePage() {
         {scanResult && scanResult.lineItems.length > 0 && (
           <div className="bg-white rounded-2xl shadow-sm p-5">
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-              Detected items
+              {t("addExpense.detectedItems")}
             </h2>
             <div className="space-y-1.5">
               {scanResult.lineItems.map((item, i) => (
@@ -233,18 +235,18 @@ export default function AddExpensePage() {
 
         {/* Basic details */}
         <div className="bg-white rounded-2xl shadow-sm p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Details</h2>
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">{t("addExpense.detailsHeading")}</h2>
           <Input
-            label="Description"
+            label={t("addExpense.descriptionLabel")}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Dinner, groceries, taxi..."
+            placeholder={t("addExpense.descriptionPlaceholder")}
             required
             autoFocus={!scanResult}
           />
           <div className="grid grid-cols-2 gap-4">
             <Input
-              label="Amount"
+              label={t("addExpense.amountLabel")}
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
@@ -254,7 +256,7 @@ export default function AddExpensePage() {
               required
             />
             <CurrencySelect
-              label="Currency"
+              label={t("addExpense.currencyLabel")}
               value={currency}
               onChange={(newCurrency) => {
                 if (amount && parseFloat(amount) > 0 && newCurrency !== currency) {
@@ -282,18 +284,22 @@ export default function AddExpensePage() {
               </svg>
               {fxRate !== null ? (
                 <span>
-                  {totalAmount.toFixed(2)} {currency} ≈{" "}
-                  <strong>{(totalAmount * fxRate).toFixed(2)} {baseCurrency}</strong>
-                  {" "}(rate: {fxRate.toFixed(4)})
+                  {t("addExpense.fxApprox", {
+                    amount: totalAmount.toFixed(2),
+                    currency,
+                    converted: (totalAmount * fxRate).toFixed(2),
+                    baseCurrency,
+                    rate: fxRate.toFixed(4),
+                  })}
                 </span>
               ) : (
-                <span>Fetching exchange rate…</span>
+                <span>{t("addExpense.fetchingRate")}</span>
               )}
             </div>
           )}
 
           <Select
-            label="Paid by"
+            label={t("addExpense.paidByLabel")}
             value={paidById}
             onChange={(e) => setPaidById(e.target.value)}
             options={memberOptions}
@@ -303,14 +309,14 @@ export default function AddExpensePage() {
 
         {/* Split method */}
         <div className="bg-white rounded-2xl shadow-sm p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Split method</h2>
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">{t("addExpense.splitMethodHeading")}</h2>
           <SplitMethodSelector value={splitMethod} onChange={setSplitMethod} />
         </div>
 
         {/* Participants */}
         <div className="bg-white rounded-2xl shadow-sm p-5 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Participants</h2>
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">{t("addExpense.participantsHeading")}</h2>
             <label className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer">
               <input
                 type="checkbox"
@@ -318,7 +324,7 @@ export default function AddExpensePage() {
                 onChange={(e) => toggleAll(e.target.checked)}
                 className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
               />
-              All
+              {t("addExpense.all")}
             </label>
           </div>
 
@@ -362,7 +368,7 @@ export default function AddExpensePage() {
                         placeholder={splitMethod === "PERCENTAGE" ? "%" : "0"}
                         min="0"
                         step={splitMethod === "SHARES" ? "1" : "0.01"}
-                        className="w-20 border border-gray-300 rounded-lg px-2 py-1 text-sm text-right focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-20 border border-gray-300 rounded-lg px-2 py-1 text-sm text-end focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
                     </div>
                   )}
@@ -386,14 +392,16 @@ export default function AddExpensePage() {
             >
               <span>
                 {splitMethod === "PERCENTAGE"
-                  ? `Total: ${runningTotal.toFixed(1)}% of 100%`
-                  : `Allocated: ${currency} ${runningTotal.toFixed(2)} of ${currency} ${totalAmount.toFixed(2)}`}
+                  ? t("addExpense.totalPercent", { percent: runningTotal.toFixed(1) })
+                  : t("addExpense.allocated", { currency, allocated: runningTotal.toFixed(2), total: totalAmount.toFixed(2) })}
               </span>
               {Math.abs(remaining) >= 0.01 && (
                 <span className="font-medium">
                   {splitMethod === "PERCENTAGE"
-                    ? `${Math.abs(100 - runningTotal).toFixed(1)}% remaining`
-                    : `${currency} ${Math.abs(remaining).toFixed(2)} ${remaining > 0 ? "remaining" : "over"}`}
+                    ? t("addExpense.percentRemaining", { percent: Math.abs(100 - runningTotal).toFixed(1) })
+                    : remaining > 0
+                      ? t("addExpense.remaining", { currency, amount: Math.abs(remaining).toFixed(2) })
+                      : t("addExpense.over", { currency, amount: Math.abs(remaining).toFixed(2) })}
                 </span>
               )}
             </div>
@@ -408,7 +416,7 @@ export default function AddExpensePage() {
 
         <div className="flex gap-3">
           <Button variant="secondary" onClick={() => router.back()} className="flex-1">
-            Cancel
+            {t("addExpense.cancel")}
           </Button>
           <Button
             type="submit"
@@ -416,7 +424,7 @@ export default function AddExpensePage() {
             disabled={!!validationError || !description || !amount}
             className="flex-1"
           >
-            Add expense
+            {t("addExpense.addExpense")}
           </Button>
         </div>
       </form>

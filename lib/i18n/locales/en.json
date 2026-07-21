@@ -1,0 +1,338 @@
+{
+  "language": {
+    "en": "English",
+    "fr": "Français",
+    "es": "Español",
+    "pt": "Português",
+    "ar": "العربية",
+    "hi": "हिन्दी",
+    "zh": "中文",
+    "selectLanguage": "Select language"
+  },
+  "common": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "close": "Close",
+    "optional": "(optional)",
+    "save": "Save",
+    "none": "None",
+    "loading": "Loading…"
+  },
+  "nav": {
+    "accountSettings": "Account settings",
+    "signOut": "Sign out"
+  },
+  "landing": {
+    "getStarted": "Get started",
+    "badge": "AI-powered bill splitting",
+    "heroTitleLine1": "Split bills without",
+    "heroTitleHighlight": "the awkward conversation",
+    "heroSubtitle": "Spliit makes shared expenses effortless. Scan a receipt, split it your way, and settle up — with AI that does the heavy lifting.",
+    "testItOut": "Test it out",
+    "signIn": "Sign in",
+    "downloadApp": "Download the app",
+    "appStoreAlt": "Download on the App Store",
+    "googlePlayAlt": "Get it on Google Play",
+    "struggleEyebrow": "The struggle is real",
+    "soundFamiliar": "Sound familiar?",
+    "quotes": [
+      "\"Who paid for the Airbnb again?\"",
+      "\"I'll Venmo you later\" — they never do.",
+      "\"Wait, do I owe you or do you owe me?\"",
+      "\"Can everyone just settle up already?\""
+    ],
+    "disappearLine1": "Spliit makes all of this",
+    "disappearLine2": "awkward",
+    "disappearLine3": "disappear.",
+    "featuresTitle": "Everything you need. Nothing you don't.",
+    "featuresSubtitle": "Built for real friend groups, roommates, and travel crews — not accountants.",
+    "features": {
+      "scanTitle": "AI Receipt Scanning",
+      "scanDescription": "Point your camera at any receipt. Spliit reads it instantly — items, amounts, totals — and pre-fills your expense automatically.",
+      "confirmTitle": "Payment Confirmation Flow",
+      "confirmDescription": "No more guessing if someone actually paid. Mark a payment, the other person confirms. Both sides stay honest.",
+      "currencyTitle": "Multi-Currency Support",
+      "currencyDescription": "Split expenses across currencies with live exchange rates. Perfect for trips abroad or international friend groups.",
+      "whatsappTitle": "WhatsApp Reminders",
+      "whatsappDescription": "One tap sends a polite nudge straight to the debtor's WhatsApp. No awkward texts needed — Spliit does it for you.",
+      "simplifyTitle": "Smart Debt Simplification",
+      "simplifyDescription": "In a group of 5, you shouldn't need 10 transfers. Spliit calculates the minimum number of payments to settle everyone up.",
+      "balancesTitle": "Clear Balances",
+      "balancesDescription": "See exactly who owes who across every group, with a full activity timeline of expenses and settlements."
+    },
+    "ctaTitle": "Ready to stop the guesswork?",
+    "ctaSubtitle": "Sign up free and settle your next shared expense in under a minute.",
+    "ctaButton": "Get started for free",
+    "footerRights": "© {{year}} <0>nusoft</0>. All rights reserved.",
+    "footerPrivacy": "Privacy Policy"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "sections": [
+      {
+        "heading": "Information that is gathered from visitors",
+        "body": "In common with other websites, log files are stored on the web server saving details such as the visitor's IP address, browser type, referring page and time of visit. Cookies may be used to remember visitor preferences when interacting with the website. Where registration is required, the visitor's email, and a username will be stored on the server."
+      },
+      {
+        "heading": "How the Information is used",
+        "body": "The information is used to enhance the visitor's experience when using the website to display personalized content and possibly advertising. E-mail addresses will not be sold, rented or leased to 3rd parties. E-mail may be sent to inform you of news of our services or offers by us or our affiliates."
+      },
+      {
+        "heading": "Visitor Options",
+        "body": "If you have subscribed to one of our services, you may unsubscribe by following the instructions which are included in the email that you receive. You may be able to block cookies via your browser settings but this may prevent you from access to certain features of the website."
+      },
+      {
+        "heading": "Cookies",
+        "body": "Cookies are small digital signature files that are stored by your web browser that allow your preferences to be recorded when visiting the website. Also, they may be used to track your return visits to the website. 3rd party advertising companies may also use cookies for tracking purposes."
+      }
+    ]
+  },
+  "auth": {
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "tagline": "Split bills smartly, no awkward conversations.",
+    "backHome": "Back",
+    "login": {
+      "title": "Sign in",
+      "submit": "Sign in",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "errorInvalid": "Invalid email or password"
+    },
+    "signup": {
+      "title": "Create your account",
+      "nameLabel": "Name",
+      "namePlaceholder": "Your name",
+      "passwordPlaceholder": "At least 8 characters",
+      "passwordHint": "Minimum 8 characters",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "errorGeneric": "Something went wrong. Please try again."
+    },
+    "verifyEmail": {
+      "checkEmail": "Check your email",
+      "sentCode": "We sent a 6-digit code to",
+      "codeLabel": "Verification code",
+      "verify": "Verify email",
+      "resendSuccess": "A new code has been sent.",
+      "noReceive": "Didn't receive a code?",
+      "resend": "Resend",
+      "sending": "Sending...",
+      "errorInvalidCode": "Invalid or expired code.",
+      "errorResendFailed": "Failed to resend code."
+    }
+  },
+  "onboarding": {
+    "welcomeTitle": "Welcome to Spliit!",
+    "subtitle": "Just a couple of quick things to set you up.",
+    "displayNameLabel": "Your display name",
+    "displayNamePlaceholder": "How should others see you?",
+    "phoneLabel": "Phone number (optional)",
+    "privacyNotice": "Your phone number is only used so group members can send you WhatsApp payment reminders. It is never shared with third parties or used for marketing.",
+    "letsGo": "Let's go",
+    "skipForNow": "Skip for now",
+    "errorSave": "Failed to save. Please try again."
+  },
+  "account": {
+    "title": "Account settings",
+    "profileHeading": "Profile",
+    "emailLabel": "Email",
+    "emailCannotChange": "Email cannot be changed.",
+    "displayNameLabel": "Display name",
+    "displayNamePlaceholder": "Your name",
+    "phoneLabel": "Phone number",
+    "privacyNotice": "Your phone number is only used so group members can send you WhatsApp payment reminders. It is never shared with third parties or used for marketing.",
+    "saveChanges": "Save changes",
+    "language": "Language",
+    "saved": "Saved!",
+    "errorSave": "Failed to save changes. Please try again.",
+    "accountHeading": "Account",
+    "signOut": "Sign out"
+  },
+  "groups": {
+    "overviewHeading": "Overview",
+    "totalPayable": "Total Payable Amount",
+    "totalReceivable": "Total Receivable Amount",
+    "myGroupsHeading": "My Groups",
+    "newGroup": "+ New group",
+    "emptyTitle": "No groups yet",
+    "emptySubtitle": "Create a group and start splitting bills with friends.",
+    "createFirstGroup": "Create your first group",
+    "member": "{{count}} member",
+    "member_other": "{{count}} members"
+  },
+  "createGroup": {
+    "title": "Create a group",
+    "nameLabel": "Group name",
+    "namePlaceholder": "Weekend trip, Apartment, Lunch crew...",
+    "emojiLabel": "Pick an emoji (optional)",
+    "colorLabel": "Color",
+    "baseCurrencyLabel": "Base currency",
+    "cancel": "Cancel",
+    "create": "Create group",
+    "errorCreate": "Failed to create group. Please try again."
+  },
+  "groupSettings": {
+    "title": "Group settings",
+    "nameLabel": "Group name",
+    "emojiLabel": "Emoji (optional)",
+    "colorLabel": "Color",
+    "baseCurrencyLabel": "Base currency",
+    "currencyChangeWarning": "Changing the base currency affects how balances are displayed going forward. Past expenses already converted are not recalculated.",
+    "membersLabel": "Members",
+    "creatorTag": "(creator)",
+    "removing": "Removing…",
+    "remove": "Remove",
+    "cancel": "Cancel",
+    "saveChanges": "Save changes",
+    "errorSave": "Failed to save settings.",
+    "errorRemoveMember": "Failed to remove member.",
+    "deleteGroup": "Delete group",
+    "deleteConfirmTitle": "Delete \"{{name}}\"?",
+    "deleteConfirmMessage": "This will permanently delete all expenses, settlements, and members. This cannot be undone.",
+    "deleting": "Deleting…",
+    "confirmDelete": "Yes, delete",
+    "errorDelete": "Failed to delete group."
+  },
+  "groupDetail": {
+    "backToGroups": "Groups",
+    "groupSettingsTitle": "Group settings",
+    "invite": "Invite",
+    "addExpense": "+ Add expense",
+    "membersHeading": "Members · {{count}}",
+    "leaveGroup": "Leave group",
+    "leaving": "Leaving…",
+    "inviteYourGroupTitle": "Invite your group",
+    "inviteYourGroupSubtitle": "Share a link so others can join and split expenses with you.",
+    "shareInviteLink": "Share invite link",
+    "activityHeading": "Activity",
+    "addExpenseLink": "+ Add expense",
+    "noExpensesYet": "No expenses yet.",
+    "addFirstExpense": "Add the first expense",
+    "loadMore": "Load more",
+    "deleteExpenseTitle": "Delete expense",
+    "deleteExpenseMessage": "This will permanently remove the expense and update all balances. This cannot be undone.",
+    "inviteLinkTitle": "Invite link",
+    "inviteLinkMessage": "Share this link with anyone you want to add to {{name}}. It expires in 7 days.",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "reminderSent": "Reminder sent to {{count}} member",
+    "reminderSent_other": "Reminder sent to {{count}} members",
+    "noRemindersToSend": "No reminders to send.",
+    "reminderFailed": "Failed to send reminder."
+  },
+  "addExpense": {
+    "title": "Add expense",
+    "detectedItems": "Detected items",
+    "detailsHeading": "Details",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Dinner, groceries, taxi...",
+    "amountLabel": "Amount",
+    "currencyLabel": "Currency",
+    "fetchingRate": "Fetching exchange rate…",
+    "fxApprox": "{{amount}} {{currency}} ≈ {{converted}} {{baseCurrency}} (rate: {{rate}})",
+    "paidByLabel": "Paid by",
+    "splitMethodHeading": "Split method",
+    "participantsHeading": "Participants",
+    "all": "All",
+    "allocated": "Allocated: {{currency}} {{allocated}} of {{currency}} {{total}}",
+    "totalPercent": "Total: {{percent}}% of 100%",
+    "remaining": "{{currency}} {{amount}} remaining",
+    "over": "{{currency}} {{amount}} over",
+    "percentRemaining": "{{percent}}% remaining",
+    "errorSelectParticipant": "Select at least one participant.",
+    "errorPercentSum": "Percentages must sum to 100 (currently {{sum}}%).",
+    "errorCustomSum": "Custom amounts must sum to ${{total}} (currently ${{sum}}).",
+    "errorSharesPositive": "All share values must be greater than 0.",
+    "errorAddExpense": "Failed to add expense.",
+    "cancel": "Cancel",
+    "addExpense": "Add expense"
+  },
+  "splitMethod": {
+    "equal": "Equal",
+    "equalDescription": "Split evenly",
+    "shares": "By share",
+    "sharesDescription": "Weighted portions",
+    "percentage": "By %",
+    "percentageDescription": "Enter percentages",
+    "custom": "Custom",
+    "customDescription": "Enter amounts"
+  },
+  "expenseItem": {
+    "paidBy": "Paid by {{name}}",
+    "you": "you",
+    "settled": "✓ Settled",
+    "youOwe": "You owe {{currency}} {{amount}}",
+    "othersOweYou": "Others owe you {{currency}} {{amount}}",
+    "remindTitle": "Send WhatsApp reminder",
+    "remind": "Remind",
+    "delete": "Delete"
+  },
+  "comments": {
+    "hide": "Hide comments",
+    "show": "Comments",
+    "showCount": "Comments ({{count}})",
+    "empty": "No comments yet.",
+    "placeholder": "Add a comment…",
+    "post": "Post",
+    "posting": "…"
+  },
+  "receiptScanner": {
+    "scanning": "Scanning receipt with AI…",
+    "title": "Scan receipt with AI",
+    "subtitle": "Auto-fills description, amount & currency",
+    "uploadImage": "Upload image",
+    "useCamera": "Use camera",
+    "errorFileType": "Please select an image file.",
+    "errorScanFailed": "Could not scan receipt. Please try again or fill in manually."
+  },
+  "settlementItem": {
+    "paid": "{{from}} paid {{to}}",
+    "you": "You",
+    "youLower": "you",
+    "pendingConfirmation": "Pending confirmation",
+    "confirmed": "Confirmed",
+    "confirmPayment": "Confirm payment",
+    "delete": "Delete",
+    "deleting": "Deleting…"
+  },
+  "balances": {
+    "heading": "Balances",
+    "sendReminders": "Send reminders",
+    "remindersSent": "Reminders sent!",
+    "you": "You",
+    "settledUp": "Settled up",
+    "everyoneSettled": "Everyone is settled up!",
+    "suggestedPayments": "Suggested payments",
+    "pay": "Pay",
+    "remindViaWhatsapp": "Remind via WhatsApp",
+    "noOutstandingDebtors": "No outstanding debtors to remind.",
+    "whatsappMessage": "Hi {{name}}, just a reminder that you owe me {{currency}} {{amount}} in \"{{group}}\" on Spliit."
+  },
+  "settleUp": {
+    "title": "Record payment",
+    "payingLabel": "You're paying",
+    "amountLabel": "Amount",
+    "noteLabel": "Note (optional)",
+    "notePlaceholder": "Cash, Venmo, etc.",
+    "cancel": "Cancel",
+    "recordPayment": "Record payment",
+    "errorRecord": "Failed to record payment. Please try again."
+  },
+  "invite": {
+    "invitedToJoin": "You're invited to join",
+    "joinGroup": "Join group",
+    "signInOrCreate": "Sign in or create an account to join this group.",
+    "signInToJoin": "Sign in to join",
+    "createAccount": "Create account",
+    "invalidInvite": "Invalid invite",
+    "invalidLinkMessage": "This invite link is invalid or has expired.",
+    "errorJoin": "Failed to join group."
+  },
+  "phoneInput": {
+    "hint": "Enter number without leading zero — e.g. 3001234567 not 03001234567"
+  }
+}

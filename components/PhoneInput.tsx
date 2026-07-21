@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const COUNTRY_CODES = [
   { code: "+1",   flag: "🇺🇸", name: "United States" },
@@ -78,7 +79,8 @@ function parsePhone(full: string): { dialCode: string; local: string } {
   return { dialCode: "+92", local: full.replace(/^\+/, "") };
 }
 
-export default function PhoneInput({ value, onChange, label = "Phone number (optional)" }: PhoneInputProps) {
+export default function PhoneInput({ value, onChange, label }: PhoneInputProps) {
+  const { t } = useTranslation();
   const parsed = parsePhone(value || "");
   const [dialCode, setDialCode] = useState(parsed.dialCode);
   const [local, setLocal] = useState(parsed.local);
@@ -107,7 +109,7 @@ export default function PhoneInput({ value, onChange, label = "Phone number (opt
           <select
             value={dialCode}
             onChange={(e) => handleDialChange(e.target.value)}
-            className="appearance-none pl-3 pr-7 py-2.5 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent h-full"
+            className="appearance-none ps-3 pe-7 py-2.5 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent h-full"
           >
             {COUNTRY_CODES.map((c, i) => (
               <option key={`${c.code}-${i}`} value={c.code}>
@@ -115,10 +117,11 @@ export default function PhoneInput({ value, onChange, label = "Phone number (opt
               </option>
             ))}
           </select>
-          <span className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-xs">▾</span>
+          <span className="absolute end-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-xs">▾</span>
         </div>
         <input
           type="tel"
+          dir="ltr"
           value={local}
           onChange={(e) => handleLocalChange(e.target.value)}
           placeholder="3001234567"
@@ -126,7 +129,7 @@ export default function PhoneInput({ value, onChange, label = "Phone number (opt
         />
       </div>
       <p className="text-xs text-gray-400 mt-1.5">
-        Enter number without leading zero — e.g. <span className="font-medium">3001234567</span> not <span className="font-medium">03001234567</span>
+        {t("phoneInput.hint")}
       </p>
     </div>
   );

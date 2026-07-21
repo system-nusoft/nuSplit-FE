@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { Group } from "@/types";
 import Card from "@/components/Card";
 
@@ -9,6 +10,7 @@ interface GroupCardProps {
 }
 
 export default function GroupCard({ group }: GroupCardProps) {
+  const { t } = useTranslation();
   return (
     <Link href={`/groups/${group.id}`} className="block">
       <Card className="hover:shadow-md transition-shadow">
@@ -27,7 +29,7 @@ export default function GroupCard({ group }: GroupCardProps) {
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-gray-900 truncate">{group.name}</p>
             <p className="text-sm text-gray-500">
-              {group.memberCount} {group.memberCount === 1 ? "member" : "members"}
+              {t("groups.member", { count: group.memberCount })}
             </p>
           </div>
           <svg className="w-5 h-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">

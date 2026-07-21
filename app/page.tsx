@@ -1,57 +1,64 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-
-const features = [
-  {
-    icon: "📷",
-    title: "AI Receipt Scanning",
-    description:
-      "Point your camera at any receipt. Squarr reads it instantly — items, amounts, totals — and pre-fills your expense automatically.",
-  },
-  {
-    icon: "✅",
-    title: "Payment Confirmation Flow",
-    description:
-      "No more guessing if someone actually paid. Mark a payment, the other person confirms. Both sides stay honest.",
-  },
-  {
-    icon: "🌍",
-    title: "Multi-Currency Support",
-    description:
-      "Split expenses across currencies with live exchange rates. Perfect for trips abroad or international friend groups.",
-  },
-  {
-    icon: "💬",
-    title: "WhatsApp Reminders",
-    description:
-      "One tap sends a polite nudge straight to the debtor's WhatsApp. No awkward texts needed — Squarr does it for you.",
-  },
-  {
-    icon: "🧮",
-    title: "Smart Debt Simplification",
-    description:
-      "In a group of 5, you shouldn't need 10 transfers. Squarr calculates the minimum number of payments to settle everyone up.",
-  },
-  {
-    icon: "📊",
-    title: "Clear Balances",
-    description:
-      "See exactly who owes who across every group, with a full activity timeline of expenses and settlements.",
-  },
-];
+import { useTranslation } from "react-i18next";
+import LanguageDropdown from "@/components/LanguageDropdown";
+import Footer from "@/components/Footer";
 
 export default function LandingPage() {
+  const { t } = useTranslation();
+
+  const features = [
+    {
+      icon: "📷",
+      title: t("landing.features.scanTitle"),
+      description: t("landing.features.scanDescription"),
+    },
+    {
+      icon: "✅",
+      title: t("landing.features.confirmTitle"),
+      description: t("landing.features.confirmDescription"),
+    },
+    {
+      icon: "🌍",
+      title: t("landing.features.currencyTitle"),
+      description: t("landing.features.currencyDescription"),
+    },
+    {
+      icon: "💬",
+      title: t("landing.features.whatsappTitle"),
+      description: t("landing.features.whatsappDescription"),
+    },
+    {
+      icon: "🧮",
+      title: t("landing.features.simplifyTitle"),
+      description: t("landing.features.simplifyDescription"),
+    },
+    {
+      icon: "📊",
+      title: t("landing.features.balancesTitle"),
+      description: t("landing.features.balancesDescription"),
+    },
+  ];
+
+  const quotes = t("landing.quotes", { returnObjects: true }) as string[];
+  const quoteEmojis = ["😬", "😅", "🤯", "😤"];
+
   return (
     <div className="min-h-screen bg-white">
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
-        <Image src="/logo-with-name.png" alt="Squarr" width={1421} height={550} className="h-10 w-auto" style={{ width: 'auto' }} />
-        <Link
-          href="/signup"
-          className="text-sm font-semibold bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition-colors"
-        >
-          Get started
-        </Link>
+        <Image src="/logo-with-name.png" alt="Spliit" width={1421} height={550} className="h-8 w-auto" style={{ width: 'auto' }} />
+        <div className="flex items-center gap-3">
+          <LanguageDropdown />
+          <Link
+            href="/signup"
+            className="text-sm font-semibold bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition-colors"
+          >
+            {t("landing.getStarted")}
+          </Link>
+        </div>
       </nav>
 
       {/* Hero */}
@@ -69,41 +76,40 @@ export default function LandingPage() {
         <div className="relative max-w-4xl mx-auto px-6 py-28 text-center">
           <div className="inline-flex items-center gap-2 bg-white/10 text-white/90 text-xs font-semibold px-3 py-1.5 rounded-full mb-8 border border-white/20">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-            AI-powered bill splitting
+            {t("landing.badge")}
           </div>
           <h1 className="text-5xl sm:text-6xl font-extrabold text-white leading-tight tracking-tight mb-6">
-            Split bills without<br />
-            <span className="text-indigo-200">the awkward conversation</span>
+            {t("landing.heroTitleLine1")}<br />
+            <span className="text-indigo-200">{t("landing.heroTitleHighlight")}</span>
           </h1>
           <p className="text-lg text-indigo-100 max-w-xl mx-auto mb-10 leading-relaxed">
-            Squarr makes shared expenses effortless. Scan a receipt, split it your way,
-            and settle up — with AI that does the heavy lifting.
+            {t("landing.heroSubtitle")}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
             <Link
               href="/signup"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-indigo-700 font-bold px-8 py-3.5 rounded-2xl hover:bg-indigo-50 transition-colors text-base shadow-lg"
             >
-              Test it out
-              <span>→</span>
+              {t("landing.testItOut")}
+              <span className="rtl:rotate-180">→</span>
             </Link>
             <Link
               href="/login"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/10 text-white font-semibold px-8 py-3.5 rounded-2xl hover:bg-white/20 transition-colors text-base border border-white/20"
             >
-              Sign in
+              {t("landing.signIn")}
             </Link>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <span className="text-xsms font-medium text-white mt-2">Download the app</span>
+            <span className="text-xsms font-medium text-white mt-2">{t("landing.downloadApp")}</span>
             <div className="flex items-center gap-3 mt-2">
               <button disabled className="cursor-not-allowed">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/app-store.svg" alt="Download on the App Store" className="h-10 w-auto" />
+                <img src="/app-store.svg" alt={t("landing.appStoreAlt")} className="h-10 w-auto" />
               </button>
               <button disabled className="bg-white rounded-md cursor-not-allowed">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/google-play.webp" alt="Get it on Google Play" className="h-10 w-auto" />
+                <img src="/google-play.webp" alt={t("landing.googlePlayAlt")} className="h-10 w-auto" />
               </button>
             </div>
           </div>
@@ -113,25 +119,20 @@ export default function LandingPage() {
       {/* Problem */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-3xl mx-auto px-6 text-center">
-          <p className="text-indigo-500 text-sm font-semibold uppercase tracking-widest mb-4">The struggle is real</p>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-12">Sound familiar?</h2>
+          <p className="text-indigo-500 text-sm font-semibold uppercase tracking-widest mb-4">{t("landing.struggleEyebrow")}</p>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-12">{t("landing.soundFamiliar")}</h2>
           <div className="flex flex-col gap-4 mb-12">
-            {[
-              { emoji: "😬", text: "\"Who paid for the Airbnb again?\"" },
-              { emoji: "😅", text: "\"I'll Venmo you later\" — they never do." },
-              { emoji: "🤯", text: "\"Wait, do I owe you or do you owe me?\"" },
-              { emoji: "😤", text: "\"Can everyone just settle up already?\"" },
-            ].map(({ emoji, text }) => (
-              <div key={text} className="flex items-center gap-4 bg-white border border-gray-200 rounded-2xl px-5 py-4 text-left shadow-sm">
-                <span className="text-2xl flex-shrink-0">{emoji}</span>
+            {quotes.map((text, i) => (
+              <div key={text} className="flex items-center gap-4 bg-white border border-gray-200 rounded-2xl px-5 py-4 text-start shadow-sm">
+                <span className="text-2xl flex-shrink-0">{quoteEmojis[i]}</span>
                 <p className="text-gray-600 text-base italic">{text}</p>
               </div>
             ))}
           </div>
           <p className="text-2xl font-bold text-gray-900">
-            Squarr makes all of this{" "}
-            <span className="text-purple-400 line-through">awkward</span>
-            {" "}disappear.
+            {t("landing.disappearLine1")}{" "}
+            <span className="text-purple-400 line-through">{t("landing.disappearLine2")}</span>
+            {" "}{t("landing.disappearLine3")}
           </p>
         </div>
       </section>
@@ -140,9 +141,9 @@ export default function LandingPage() {
       <section className="bg-blue-100 py-20">
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">Everything you need. Nothing you don&apos;t.</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">{t("landing.featuresTitle")}</h2>
             <p className="text-gray-500 text-base max-w-xl mx-auto">
-              Built for real friend groups, roommates, and travel crews — not accountants.
+              {t("landing.featuresSubtitle")}
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -164,30 +165,20 @@ export default function LandingPage() {
 
       {/* CTA */}
       <section className="max-w-2xl mx-auto px-6 py-24 text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to stop the guesswork?</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">{t("landing.ctaTitle")}</h2>
         <p className="text-gray-500 mb-8">
-          Sign up free and settle your next shared expense in under a minute.
+          {t("landing.ctaSubtitle")}
         </p>
         <Link
           href="/signup"
           className="inline-flex items-center gap-2 bg-indigo-600 text-white font-bold px-10 py-4 rounded-2xl hover:bg-indigo-700 transition-colors text-base shadow-lg"
         >
-          Get started for free
-          <span>→</span>
+          {t("landing.ctaButton")}
+          <span className="rtl:rotate-180">→</span>
         </Link>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-100 py-8">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-400">
-          <Image src="/logo-with-name.png" alt="Squarr" width={1421} height={550} className="h-7 w-auto" style={{ width: 'auto' }} />
-          <span>© {new Date().getFullYear()} nusoft. All rights reserved.</span>
-          <div className="flex gap-4">
-            <Link href="/login" className="hover:text-gray-600 transition-colors">Sign in</Link>
-            <Link href="/signup" className="hover:text-gray-600 transition-colors">Sign up</Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

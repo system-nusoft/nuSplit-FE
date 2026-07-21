@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Group } from "@/types";
 import { getGroupsApi, getBalanceOverviewApi } from "@/lib/services/groups.service";
 import GroupCard from "@/components/groups/GroupCard";
@@ -14,6 +15,7 @@ interface BalanceOverview {
 }
 
 export default function GroupsPage() {
+  const { t } = useTranslation();
   const [groups, setGroups] = useState<Group[]>([]);
   const [overview, setOverview] = useState<BalanceOverview | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,7 +39,7 @@ export default function GroupsPage() {
     <div className="space-y-8">
       {/* Overview */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">Overview</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-3">{t("groups.overviewHeading")}</h2>
         {loading ? (
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-red-50 rounded-2xl px-4 py-4 animate-pulse h-20" />
@@ -46,7 +48,7 @@ export default function GroupsPage() {
         ) : (
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-red-50 rounded-2xl px-4 py-4">
-              <p className="text-xs font-semibold text-red-400 uppercase tracking-wide mb-2">Total Payable Amount</p>
+              <p className="text-xs font-semibold text-red-400 uppercase tracking-wide mb-2">{t("groups.totalPayable")}</p>
               {totalPayable.length === 0 ? (
                 <p className="text-xl font-bold text-red-200">—</p>
               ) : totalPayable.map(([cur, amt]) => (
@@ -56,7 +58,7 @@ export default function GroupsPage() {
               ))}
             </div>
             <div className="bg-blue-50 rounded-2xl px-4 py-4">
-              <p className="text-xs font-semibold text-blue-400 uppercase tracking-wide mb-2">Total Receivable Amount</p>
+              <p className="text-xs font-semibold text-blue-400 uppercase tracking-wide mb-2">{t("groups.totalReceivable")}</p>
               {totalReceivable.length === 0 ? (
                 <p className="text-xl font-bold text-blue-200">—</p>
               ) : totalReceivable.map(([cur, amt]) => (
@@ -73,10 +75,10 @@ export default function GroupsPage() {
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-semibold text-gray-900">
-            My Groups{!loading && groups.length > 0 && ` · ${groups.length}`}
+            {t("groups.myGroupsHeading")}{!loading && groups.length > 0 && ` · ${groups.length}`}
           </h2>
           <Button onClick={() => setShowCreate(true)} size="sm">
-            + New group
+            {t("groups.newGroup")}
           </Button>
         </div>
 
@@ -89,11 +91,11 @@ export default function GroupsPage() {
             <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <span className="text-3xl">👥</span>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">No groups yet</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">{t("groups.emptyTitle")}</h3>
             <p className="text-gray-500 text-sm mb-6">
-              Create a group and start splitting bills with friends.
+              {t("groups.emptySubtitle")}
             </p>
-            <Button onClick={() => setShowCreate(true)}>Create your first group</Button>
+            <Button onClick={() => setShowCreate(true)}>{t("groups.createFirstGroup")}</Button>
           </div>
         ) : (
           <div className="flex flex-col gap-4">

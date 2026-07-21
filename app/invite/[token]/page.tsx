@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { getInvitePreviewApi, acceptInviteApi, InvitePreview } from "@/lib/services/groups.service";
 import Button from "@/components/Button";
@@ -9,6 +10,7 @@ import Card from "@/components/Card";
 import Spinner from "@/components/Spinner";
 
 export default function InvitePage() {
+  const { t } = useTranslation();
   const { token } = useParams<{ token: string }>();
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
@@ -22,7 +24,7 @@ export default function InvitePage() {
   useEffect(() => {
     getInvitePreviewApi(token)
       .then(setPreview)
-      .catch(() => setPreviewError("This invite link is invalid or has expired."))
+      .catch(() => setPreviewError(t("invite.invalidLinkMessage")))
       .finally(() => setLoadingPreview(false));
   }, [token]);
 
@@ -39,8 +41,8 @@ export default function InvitePage() {
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        "Failed to join group.";
-      setError(typeof msg === "string" ? msg : "Failed to join group.");
+        t("invite.errorJoin");
+      setError(typeof msg === "string" ? msg : t("invite.errorJoin"));
     } finally {
       setAccepting(false);
     }
@@ -58,7 +60,7 @@ export default function InvitePage() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-indigo-600">Squarr</h1>
+          <h1 className="text-3xl font-bold text-indigo-600">Spliit</h1>
         </div>
 
         <Card padding="lg">
@@ -69,7 +71,7 @@ export default function InvitePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">Invalid invite</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">{t("invite.invalidInvite")}</h2>
               <p className="text-sm text-gray-500">{previewError}</p>
             </div>
           ) : preview ? (
@@ -87,7 +89,7 @@ export default function InvitePage() {
                   )}
                 </div>
                 <h2 className="text-xl font-bold text-gray-900">
-                  You&apos;re invited to join
+                  {t("invite.invitedToJoin")}
                 </h2>
                 <p className="text-2xl font-bold text-indigo-600 mt-1">{preview.groupName}</p>
               </div>
@@ -100,19 +102,19 @@ export default function InvitePage() {
 
               {user ? (
                 <Button fullWidth loading={accepting} size="lg" onClick={handleAccept}>
-                  Join group
+                  {t("invite.joinGroup")}
                 </Button>
               ) : (
                 <div className="space-y-3">
                   <p className="text-sm text-gray-500 text-center mb-3">
-                    Sign in or create an account to join this group.
+                    {t("invite.signInOrCreate")}
                   </p>
                   <Button
                     fullWidth
                     size="lg"
                     onClick={() => router.push(`/login?next=/invite/${token}`)}
                   >
-                    Sign in to join
+                    {t("invite.signInToJoin")}
                   </Button>
                   <Button
                     fullWidth
@@ -120,7 +122,7 @@ export default function InvitePage() {
                     variant="secondary"
                     onClick={() => router.push(`/signup?next=/invite/${token}`)}
                   >
-                    Create account
+                    {t("invite.createAccount")}
                   </Button>
                 </div>
               )}

@@ -46,7 +46,7 @@ export default function Input({
       {label && (
         <label htmlFor={inputId} className="text-sm font-medium text-gray-700">
           {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className="text-red-500 ms-1">*</span>}
         </label>
       )}
       <input

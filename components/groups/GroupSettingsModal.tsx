@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Modal from "@/components/Modal";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
@@ -33,6 +34,7 @@ export default function GroupSettingsModal({
   onMemberRemoved,
   onDeleted,
 }: GroupSettingsModalProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState(group.name);
   const [emoji, setEmoji] = useState(group.emoji ?? "");
   const [color, setColor] = useState(group.avatarColor);
@@ -60,7 +62,7 @@ export default function GroupSettingsModal({
       onUpdated({ ...group, name: updated.name, emoji: updated.emoji, avatarColor: updated.avatarColor, baseCurrency: updated.baseCurrency });
       onClose();
     } catch {
-      setError("Failed to save settings.");
+      setError(t("groupSettings.errorSave"));
     } finally {
       setLoading(false);
     }
@@ -72,7 +74,7 @@ export default function GroupSettingsModal({
       await removeMemberApi(group.id, memberId);
       onMemberRemoved(memberId);
     } catch {
-      setError("Failed to remove member.");
+      setError(t("groupSettings.errorRemoveMember"));
     } finally {
       setRemovingId(null);
     }
@@ -85,17 +87,17 @@ export default function GroupSettingsModal({
       onClose();
       onDeleted?.();
     } catch {
-      setError("Failed to delete group.");
+      setError(t("groupSettings.errorDelete"));
     } finally {
       setDeleting(false);
     }
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Group settings">
+    <Modal open={open} onClose={onClose} title={t("groupSettings.title")}>
       <form onSubmit={handleSubmit} className="space-y-5">
         <Input
-          label="Group name"
+          label={t("groupSettings.nameLabel")}
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
@@ -103,7 +105,7 @@ export default function GroupSettingsModal({
         />
 
         <div>
-          <p className="text-sm font-medium text-gray-700 mb-2">Emoji (optional)</p>
+          <p className="text-sm font-medium text-gray-700 mb-2">{t("groupSettings.emojiLabel")}</p>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -130,7 +132,7 @@ export default function GroupSettingsModal({
         </div>
 
         <div>
-          <p className="text-sm font-medium text-gray-700 mb-2">Color</p>
+          <p className="text-sm font-medium text-gray-700 mb-2">{t("groupSettings.colorLabel")}</p>
           <div className="flex gap-2">
             {COLORS.map((c) => (
               <button
@@ -147,17 +149,17 @@ export default function GroupSettingsModal({
         </div>
 
         <CurrencySelect
-          label="Base currency"
+          label={t("groupSettings.baseCurrencyLabel")}
           value={baseCurrency}
           onChange={setBaseCurrency}
         />
 
         <p className="text-xs text-amber-600 bg-amber-50 rounded-lg px-3 py-2">
-          Changing the base currency affects how balances are displayed going forward. Past expenses already converted are not recalculated.
+          {t("groupSettings.currencyChangeWarning")}
         </p>
 
         <div>
-          <p className="text-sm font-medium text-gray-700 mb-2">Members</p>
+          <p className="text-sm font-medium text-gray-700 mb-2">{t("groupSettings.membersLabel")}</p>
           <div className="space-y-2">
             {group.members.map((m) => {
               const isCreator = m.id === group.createdById;
@@ -170,7 +172,7 @@ export default function GroupSettingsModal({
                     </div>
                     <span className="text-sm text-gray-700 truncate">
                       {m.name || m.email}
-                      {isCreator && <span className="text-xs text-gray-400 ml-1">(creator)</span>}
+                      {isCreator && <span className="text-xs text-gray-400 ms-1">{t("groupSettings.creatorTag")}</span>}
                     </span>
                   </div>
                   {!isCreator && !isCurrentUser && (
@@ -180,7 +182,7 @@ export default function GroupSettingsModal({
                       disabled={removingId === m.id}
                       className="text-xs text-red-400 hover:text-red-600 flex-shrink-0 transition-colors disabled:opacity-50"
                     >
-                      {removingId === m.id ? "Removing…" : "Remove"}
+                      {removingId === m.id ? t("groupSettings.removing") : t("groupSettings.remove")}
                     </button>
                   )}
                 </div>
@@ -193,10 +195,10 @@ export default function GroupSettingsModal({
 
         <div className="flex gap-3 pt-1">
           <Button variant="secondary" onClick={onClose} className="flex-1">
-            Cancel
+            {t("groupSettings.cancel")}
           </Button>
           <Button type="submit" loading={loading} className="flex-1">
-            Save changes
+            {t("groupSettings.saveChanges")}
           </Button>
         </div>
 
@@ -208,19 +210,19 @@ export default function GroupSettingsModal({
                 onClick={() => setShowDeleteConfirm(true)}
                 className="text-sm text-red-500 hover:text-red-700 transition-colors"
               >
-                Delete group
+                {t("groupSettings.deleteGroup")}
               </button>
             ) : (
               <div className="bg-red-50 rounded-xl p-4 space-y-3">
-                <p className="text-sm text-red-700 font-medium">Delete &quot;{group.name}&quot;?</p>
-                <p className="text-xs text-red-500">This will permanently delete all expenses, settlements, and members. This cannot be undone.</p>
+                <p className="text-sm text-red-700 font-medium">{t("groupSettings.deleteConfirmTitle", { name: group.name })}</p>
+                <p className="text-xs text-red-500">{t("groupSettings.deleteConfirmMessage")}</p>
                 <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={() => setShowDeleteConfirm(false)}
                     className="flex-1 text-sm py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
                   >
-                    Cancel
+                    {t("groupSettings.cancel")}
                   </button>
                   <button
                     type="button"
@@ -228,7 +230,7 @@ export default function GroupSettingsModal({
                     disabled={deleting}
                     className="flex-1 text-sm py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50"
                   >
-                    {deleting ? "Deleting…" : "Yes, delete"}
+                    {deleting ? t("groupSettings.deleting") : t("groupSettings.confirmDelete")}
                   </button>
                 </div>
               </div>

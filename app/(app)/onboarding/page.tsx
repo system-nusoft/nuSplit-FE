@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useAuth, updateMeApi } from "@/contexts/AuthContext";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
@@ -9,6 +10,7 @@ import Card from "@/components/Card";
 import PhoneInput from "@/components/PhoneInput";
 
 export default function OnboardingPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { user, updateUser } = useAuth();
   const [name, setName] = useState(user?.name ?? "");
@@ -25,7 +27,7 @@ export default function OnboardingPage() {
       updateUser(updated);
       router.push("/groups");
     } catch {
-      setError("Failed to save. Please try again.");
+      setError(t("onboarding.errorSave"));
     } finally {
       setLoading(false);
     }
@@ -38,22 +40,22 @@ export default function OnboardingPage() {
           <div className="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <span className="text-3xl">🎉</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Welcome to Squarr!</h1>
-          <p className="text-gray-500 text-sm mt-1">Just a couple of quick things to set you up.</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t("onboarding.welcomeTitle")}</h1>
+          <p className="text-gray-500 text-sm mt-1">{t("onboarding.subtitle")}</p>
         </div>
 
         <Card padding="lg">
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input
-              label="Your display name"
+              label={t("onboarding.displayNameLabel")}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="How should others see you?"
+              placeholder={t("onboarding.displayNamePlaceholder")}
               autoFocus
             />
 
             <PhoneInput
-              label="Phone number (optional)"
+              label={t("onboarding.phoneLabel")}
               value={phone}
               onChange={setPhone}
             />
@@ -65,8 +67,7 @@ export default function OnboardingPage() {
                   d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
               <p className="text-xs text-indigo-600 leading-relaxed">
-                Your phone number is only used so group members can send you WhatsApp payment reminders.
-                It is never shared with third parties or used for marketing.
+                {t("onboarding.privacyNotice")}
               </p>
             </div>
 
@@ -77,14 +78,14 @@ export default function OnboardingPage() {
             )}
 
             <Button type="submit" fullWidth loading={loading} size="lg">
-              Let&apos;s go
+              {t("onboarding.letsGo")}
             </Button>
             <button
               type="button"
               onClick={() => router.push("/groups")}
               className="w-full text-sm text-gray-400 hover:text-gray-600 transition-colors"
             >
-              Skip for now
+              {t("onboarding.skipForNow")}
             </button>
           </form>
         </Card>

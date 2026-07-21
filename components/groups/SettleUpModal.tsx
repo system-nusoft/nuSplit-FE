@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Modal from "@/components/Modal";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
@@ -22,6 +23,7 @@ export default function SettleUpModal({
   transaction,
   onSettled,
 }: SettleUpModalProps) {
+  const { t } = useTranslation();
   const [amount, setAmount] = useState(transaction.amount.toFixed(2));
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,24 +41,24 @@ export default function SettleUpModal({
       });
       onSettled();
     } catch {
-      setError("Failed to record payment. Please try again.");
+      setError(t("settleUp.errorRecord"));
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Record payment">
+    <Modal open={open} onClose={onClose} title={t("settleUp.title")}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="bg-indigo-50 rounded-xl p-4 text-sm text-gray-700">
           <p>
-            You&apos;re paying{" "}
+            {t("settleUp.payingLabel")}{" "}
             <span className="font-semibold text-indigo-700">{transaction.toName}</span>
           </p>
         </div>
 
         <Input
-          label="Amount"
+          label={t("settleUp.amountLabel")}
           type="number"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
@@ -66,10 +68,10 @@ export default function SettleUpModal({
         />
 
         <Input
-          label="Note (optional)"
+          label={t("settleUp.noteLabel")}
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          placeholder="Cash, Venmo, etc."
+          placeholder={t("settleUp.notePlaceholder")}
         />
 
         {error && (
@@ -78,10 +80,10 @@ export default function SettleUpModal({
 
         <div className="flex gap-3 pt-1">
           <Button variant="secondary" onClick={onClose} className="flex-1">
-            Cancel
+            {t("settleUp.cancel")}
           </Button>
           <Button type="submit" loading={loading} className="flex-1">
-            Record payment
+            {t("settleUp.recordPayment")}
           </Button>
         </div>
       </form>

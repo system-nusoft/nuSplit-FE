@@ -2,6 +2,7 @@
 
 import React, { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { verifyEmailApi, resendOtpApi } from "@/lib/services/auth.service";
 import Input from "@/components/Input";
@@ -9,6 +10,7 @@ import Button from "@/components/Button";
 import Card from "@/components/Card";
 
 function VerifyEmailInner() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useSearchParams();
   const email = params.get("email") ?? "";
@@ -30,8 +32,8 @@ function VerifyEmailInner() {
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        "Invalid or expired code.";
-      setError(typeof msg === "string" ? msg : "Invalid code");
+        t("auth.verifyEmail.errorInvalidCode");
+      setError(typeof msg === "string" ? msg : t("auth.verifyEmail.errorInvalidCode"));
     } finally {
       setLoading(false);
     }
@@ -43,7 +45,7 @@ function VerifyEmailInner() {
       await resendOtpApi(email);
       setResent(true);
     } catch {
-      setError("Failed to resend code.");
+      setError(t("auth.verifyEmail.errorResendFailed"));
     } finally {
       setResending(false);
     }
@@ -57,16 +59,16 @@ function VerifyEmailInner() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
         </div>
-        <h2 className="text-xl font-bold text-gray-900">Check your email</h2>
+        <h2 className="text-xl font-bold text-gray-900">{t("auth.verifyEmail.checkEmail")}</h2>
         <p className="text-sm text-gray-500 mt-1">
-          We sent a 6-digit code to{" "}
+          {t("auth.verifyEmail.sentCode")}{" "}
           <span className="font-medium text-gray-700">{email}</span>
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
-          label="Verification code"
+          label={t("auth.verifyEmail.codeLabel")}
           value={code}
           onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
           placeholder="123456"
@@ -80,22 +82,22 @@ function VerifyEmailInner() {
         )}
         {resent && (
           <div className="bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-3 py-2">
-            A new code has been sent.
+            {t("auth.verifyEmail.resendSuccess")}
           </div>
         )}
         <Button type="submit" fullWidth loading={loading} size="lg" disabled={code.length !== 6}>
-          Verify email
+          {t("auth.verifyEmail.verify")}
         </Button>
       </form>
 
       <p className="text-center text-sm text-gray-500 mt-5">
-        Didn&apos;t receive a code?{" "}
+        {t("auth.verifyEmail.noReceive")}{" "}
         <button
           onClick={handleResend}
           disabled={resending}
           className="text-indigo-600 font-medium hover:underline disabled:opacity-50"
         >
-          {resending ? "Sending..." : "Resend"}
+          {resending ? t("auth.verifyEmail.sending") : t("auth.verifyEmail.resend")}
         </button>
       </p>
     </Card>

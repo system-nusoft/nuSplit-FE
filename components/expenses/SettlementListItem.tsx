@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Settlement } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
 import Button from "@/components/Button";
@@ -13,6 +15,8 @@ interface SettlementListItemProps {
 }
 
 export default function SettlementListItem({ settlement, groupId, onUpdated }: SettlementListItemProps) {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
   const { user } = useAuth();
   const isSender = settlement.fromUserId === user?.id;
   const isReceiver = settlement.toUserId === user?.id;
@@ -60,20 +64,21 @@ export default function SettlementListItem({ settlement, groupId, onUpdated }: S
 
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-gray-900">
-          {isSender ? "You" : fromName}
-          <span className="text-gray-400 font-normal"> paid </span>
-          {isReceiver ? "you" : toName}
+          {t("settlementItem.paid", {
+            from: isSender ? t("settlementItem.you") : fromName,
+            to: isReceiver ? t("settlementItem.youLower") : toName,
+          })}
         </p>
         {settlement.note && (
           <p className="text-xs text-gray-400 mt-0.5">{settlement.note}</p>
         )}
         <p className="text-xs text-gray-400 mt-0.5">
-          {new Date(settlement.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+          {new Date(settlement.createdAt).toLocaleDateString(language, { month: "short", day: "numeric" })}
           {" · "}
           {isPending ? (
-            <span className="text-amber-500 font-medium">Pending confirmation</span>
+            <span className="text-amber-500 font-medium">{t("settlementItem.pendingConfirmation")}</span>
           ) : (
-            <span className="text-green-600 font-medium">Confirmed</span>
+            <span className="text-green-600 font-medium">{t("settlementItem.confirmed")}</span>
           )}
         </p>
 
@@ -81,7 +86,7 @@ export default function SettlementListItem({ settlement, groupId, onUpdated }: S
           <div className="flex gap-2 mt-2">
             {isReceiver && (
               <Button size="sm" onClick={handleConfirm} loading={confirming}>
-                Confirm payment
+                {t("settlementItem.confirmPayment")}
               </Button>
             )}
             {isSender && (
@@ -90,14 +95,14 @@ export default function SettlementListItem({ settlement, groupId, onUpdated }: S
                 disabled={deleting}
                 className="text-xs text-red-400 hover:text-red-600 transition-colors disabled:opacity-50"
               >
-                {deleting ? "Deleting…" : "Delete"}
+                {deleting ? t("settlementItem.deleting") : t("settlementItem.delete")}
               </button>
             )}
           </div>
         )}
       </div>
 
-      <div className="text-right flex-shrink-0">
+      <div className="text-end flex-shrink-0">
         <p className={`font-semibold ${isPending ? "text-amber-600" : "text-green-700"}`}>
           {parseFloat(settlement.amount).toFixed(2)}
         </p>

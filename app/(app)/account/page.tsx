@@ -2,13 +2,16 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useAuth, updateMeApi } from "@/contexts/AuthContext";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
 import PhoneInput from "@/components/PhoneInput";
+import LanguageDropdown from "@/components/LanguageDropdown";
 
 export default function AccountPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { user, updateUser, logout } = useAuth();
 
@@ -32,7 +35,7 @@ export default function AccountPage() {
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch {
-      setError("Failed to save changes. Please try again.");
+      setError(t("account.errorSave"));
     } finally {
       setLoading(false);
     }
@@ -44,36 +47,36 @@ export default function AccountPage() {
         onClick={() => router.back()}
         className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors mb-6"
       >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        Back
+        {t("common.back")}
       </button>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Account settings</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">{t("account.title")}</h1>
 
       <div className="space-y-4">
         {/* Profile */}
         <Card padding="lg">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-5">Profile</h2>
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-5">{t("account.profileHeading")}</h2>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("account.emailLabel")}</label>
               <div className="border border-gray-200 rounded-xl px-3 py-2.5 bg-gray-50 text-sm text-gray-500 select-all">
                 {user?.email}
               </div>
-              <p className="text-xs text-gray-400 mt-1">Email cannot be changed.</p>
+              <p className="text-xs text-gray-400 mt-1">{t("account.emailCannotChange")}</p>
             </div>
 
             <Input
-              label="Display name"
+              label={t("account.displayNameLabel")}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
+              placeholder={t("account.displayNamePlaceholder")}
             />
 
             <PhoneInput
-              label="Phone number"
+              label={t("account.phoneLabel")}
               value={phone}
               onChange={setPhone}
             />
@@ -84,8 +87,7 @@ export default function AccountPage() {
                   d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
               <p className="text-xs text-indigo-600 leading-relaxed">
-                Your phone number is only used so group members can send you WhatsApp payment reminders.
-                It is never shared with third parties or used for marketing.
+                {t("account.privacyNotice")}
               </p>
             </div>
 
@@ -94,22 +96,28 @@ export default function AccountPage() {
             )}
 
             <Button type="submit" loading={loading} fullWidth>
-              {success ? "Saved!" : "Save changes"}
+              {success ? t("account.saved") : t("account.saveChanges")}
             </Button>
           </form>
         </Card>
 
+        {/* Language */}
+        <Card padding="lg">
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">{t("account.language")}</h2>
+          <LanguageDropdown />
+        </Card>
+
         {/* Danger zone */}
         <Card padding="lg">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Account</h2>
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">{t("account.accountHeading")}</h2>
           <button
             onClick={async () => {
               await logout();
               router.push("/login");
             }}
-            className="w-full text-left text-sm text-red-600 hover:text-red-700 font-medium transition-colors"
+            className="w-full text-start text-sm text-red-600 hover:text-red-700 font-medium transition-colors"
           >
-            Sign out
+            {t("account.signOut")}
           </button>
         </Card>
       </div>
