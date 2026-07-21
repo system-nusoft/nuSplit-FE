@@ -3,12 +3,14 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
 
 export default function LoginPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
@@ -26,7 +28,7 @@ export default function LoginPage() {
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        "Invalid email or password";
+        t("auth.login.errorInvalid");
       // If unverified, redirect to verify-email
       if (typeof msg === "string" && msg.toLowerCase().includes("verify")) {
         router.push(`/verify-email?email=${encodeURIComponent(email)}`);
@@ -40,10 +42,10 @@ export default function LoginPage() {
 
   return (
     <Card padding="lg">
-      <h2 className="text-xl font-bold text-gray-900 mb-6">Sign in</h2>
+      <h2 className="text-xl font-bold text-gray-900 mb-6">{t("auth.login.title")}</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
-          label="Email"
+          label={t("auth.emailLabel")}
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -52,7 +54,7 @@ export default function LoginPage() {
           autoFocus
         />
         <Input
-          label="Password"
+          label={t("auth.passwordLabel")}
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -65,13 +67,13 @@ export default function LoginPage() {
           </div>
         )}
         <Button type="submit" fullWidth loading={loading} size="lg" className="mt-2">
-          Sign in
+          {t("auth.login.submit")}
         </Button>
       </form>
       <p className="text-center text-sm text-gray-500 mt-5">
-        Don&apos;t have an account?{" "}
+        {t("auth.login.noAccount")}{" "}
         <Link href="/signup" className="text-indigo-600 font-medium hover:underline">
-          Sign up
+          {t("auth.login.signUp")}
         </Link>
       </p>
     </Card>

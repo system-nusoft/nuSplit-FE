@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Modal from "@/components/Modal";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
@@ -21,6 +22,7 @@ interface CreateGroupModalProps {
 }
 
 export default function CreateGroupModal({ open, onClose, onCreated }: CreateGroupModalProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [emoji, setEmoji] = useState("");
   const [color, setColor] = useState(COLORS[0]);
@@ -41,26 +43,26 @@ export default function CreateGroupModal({ open, onClose, onCreated }: CreateGro
       setColor(COLORS[0]);
       setBaseCurrency("USD");
     } catch {
-      setError("Failed to create group. Please try again.");
+      setError(t("createGroup.errorCreate"));
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Create a group">
+    <Modal open={open} onClose={onClose} title={t("createGroup.title")}>
       <form onSubmit={handleSubmit} className="space-y-5">
         <Input
-          label="Group name"
+          label={t("createGroup.nameLabel")}
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Weekend trip, Apartment, Lunch crew..."
+          placeholder={t("createGroup.namePlaceholder")}
           required
           autoFocus
         />
 
         <div>
-          <p className="text-sm font-medium text-gray-700 mb-2">Pick an emoji (optional)</p>
+          <p className="text-sm font-medium text-gray-700 mb-2">{t("createGroup.emojiLabel")}</p>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -87,7 +89,7 @@ export default function CreateGroupModal({ open, onClose, onCreated }: CreateGro
         </div>
 
         <div>
-          <p className="text-sm font-medium text-gray-700 mb-2">Color</p>
+          <p className="text-sm font-medium text-gray-700 mb-2">{t("createGroup.colorLabel")}</p>
           <div className="flex gap-2">
             {COLORS.map((c) => (
               <button
@@ -104,7 +106,7 @@ export default function CreateGroupModal({ open, onClose, onCreated }: CreateGro
         </div>
 
         <CurrencySelect
-          label="Base currency"
+          label={t("createGroup.baseCurrencyLabel")}
           value={baseCurrency}
           onChange={setBaseCurrency}
         />
@@ -113,10 +115,10 @@ export default function CreateGroupModal({ open, onClose, onCreated }: CreateGro
 
         <div className="flex gap-3 pt-1">
           <Button variant="secondary" onClick={onClose} className="flex-1">
-            Cancel
+            {t("createGroup.cancel")}
           </Button>
           <Button type="submit" loading={loading} className="flex-1">
-            Create group
+            {t("createGroup.create")}
           </Button>
         </div>
       </form>

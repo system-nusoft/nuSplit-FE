@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { GroupDetail, Expense, PaginatedResponse, BalancesResponse, Settlement } from "@/types";
 import { getGroupApi, createInviteApi, getBalancesApi, removeMemberApi } from "@/lib/services/groups.service";
 import { getExpensesApi, deleteExpenseApi, sendExpenseReminderApi } from "@/lib/services/expenses.service";
@@ -36,6 +37,7 @@ function buildTimeline(expenses: Expense[], settlements: Settlement[]): Timeline
 }
 
 export default function GroupDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const router = useRouter();
@@ -102,9 +104,9 @@ export default function GroupDetailPage() {
   async function handleRemindExpense(expenseId: string) {
     try {
       const { sent } = await sendExpenseReminderApi(id, expenseId);
-      alert(sent > 0 ? `Reminder sent to ${sent} member${sent > 1 ? "s" : ""}.` : "No reminders to send.");
+      alert(sent > 0 ? t("groupDetail.reminderSent", { count: sent }) : t("groupDetail.noRemindersToSend"));
     } catch {
-      alert("Failed to send reminder.");
+      alert(t("groupDetail.reminderFailed"));
     }
   }
 
@@ -213,10 +215,10 @@ export default function GroupDetailPage() {
         onClick={() => router.push("/groups")}
         className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors"
       >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        Groups
+        {t("groupDetail.backToGroups")}
       </button>
 
       {/* Header */}
@@ -238,7 +240,7 @@ export default function GroupDetailPage() {
             <button
               onClick={() => setShowSettings(true)}
               className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-              title="Group settings"
+              title={t("groupDetail.groupSettingsTitle")}
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -248,10 +250,10 @@ export default function GroupDetailPage() {
             </button>
           )}
           <Button variant="secondary" size="sm" onClick={handleInvite} loading={inviteLoading}>
-            Invite
+            {t("groupDetail.invite")}
           </Button>
           <Link href={`/groups/${id}/add-expense`}>
-            <Button size="sm">+ Add expense</Button>
+            <Button size="sm">{t("groupDetail.addExpense")}</Button>
           </Link>
         </div>
       </div>
@@ -260,7 +262,7 @@ export default function GroupDetailPage() {
       <Card padding="md">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-            Members · {group.members.length}
+            {t("groupDetail.membersHeading", { count: group.members.length })}
           </h2>
           {group.createdById !== user?.id && (
             <button
@@ -268,7 +270,7 @@ export default function GroupDetailPage() {
               disabled={leaving}
               className="text-xs text-red-400 hover:text-red-600 transition-colors disabled:opacity-50"
             >
-              {leaving ? "Leaving…" : "Leave group"}
+              {leaving ? t("groupDetail.leaving") : t("groupDetail.leaveGroup")}
             </button>
           )}
         </div>
@@ -287,10 +289,10 @@ export default function GroupDetailPage() {
         </div>
         {group.members.length === 1 && (
           <div className="mt-4 rounded-xl bg-indigo-50 border border-indigo-100 p-4 text-center">
-            <p className="text-sm font-semibold text-gray-700 mb-1">Invite your group</p>
-            <p className="text-xs text-gray-400 mb-3">Share a link so others can join and split expenses with you.</p>
+            <p className="text-sm font-semibold text-gray-700 mb-1">{t("groupDetail.inviteYourGroupTitle")}</p>
+            <p className="text-xs text-gray-400 mb-3">{t("groupDetail.inviteYourGroupSubtitle")}</p>
             <Button variant="primary" size="sm" onClick={handleInvite} loading={inviteLoading}>
-              Share invite link
+              {t("groupDetail.shareInviteLink")}
             </Button>
           </div>
         )}
@@ -311,21 +313,21 @@ export default function GroupDetailPage() {
       <Card padding="md">
         <div className="flex items-center justify-between mb-1">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-            Activity {expenses ? `· ${expenses.total + (balances?.settlements.length ?? 0)}` : ""}
+            {t("groupDetail.activityHeading")} {expenses ? `· ${expenses.total + (balances?.settlements.length ?? 0)}` : ""}
           </h2>
           <Link href={`/groups/${id}/add-expense`}>
             <button className="text-sm text-indigo-600 font-medium hover:underline">
-              + Add expense
+              {t("groupDetail.addExpenseLink")}
             </button>
           </Link>
         </div>
 
         {timeline.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray-400 text-sm">No expenses yet.</p>
+            <p className="text-gray-400 text-sm">{t("groupDetail.noExpensesYet")}</p>
             <Link href={`/groups/${id}/add-expense`}>
               <Button variant="ghost" size="sm" className="mt-2">
-                Add the first expense
+                {t("groupDetail.addFirstExpense")}
               </Button>
             </Link>
           </div>
@@ -355,7 +357,7 @@ export default function GroupDetailPage() {
             {hasMoreExpenses && (
               <div className="text-center pt-3">
                 <Button variant="ghost" size="sm" onClick={loadMore}>
-                  Load more
+                  {t("groupDetail.loadMore")}
                 </Button>
               </div>
             )}
@@ -368,9 +370,9 @@ export default function GroupDetailPage() {
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={confirmDeleteExpense}
-        title="Delete expense"
-        message="This will permanently remove the expense and update all balances. This cannot be undone."
-        confirmLabel="Delete"
+        title={t("groupDetail.deleteExpenseTitle")}
+        message={t("groupDetail.deleteExpenseMessage")}
+        confirmLabel={t("common.delete")}
         loading={deleting}
       />
 
@@ -388,9 +390,9 @@ export default function GroupDetailPage() {
       )}
 
       {/* Invite modal */}
-      <Modal open={showInviteModal} onClose={() => setShowInviteModal(false)} title="Invite link">
+      <Modal open={showInviteModal} onClose={() => setShowInviteModal(false)} title={t("groupDetail.inviteLinkTitle")}>
         <p className="text-sm text-gray-500 mb-4">
-          Share this link with anyone you want to add to <strong>{group.name}</strong>. It expires in 7 days.
+          {t("groupDetail.inviteLinkMessage", { name: group.name })}
         </p>
         <div className="flex gap-2">
           <input
@@ -399,7 +401,7 @@ export default function GroupDetailPage() {
             className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 bg-gray-50 truncate"
           />
           <Button onClick={copyInvite} size="md" variant={copied ? "secondary" : "primary"}>
-            {copied ? "Copied!" : "Copy"}
+            {copied ? t("groupDetail.copied") : t("groupDetail.copy")}
           </Button>
         </div>
       </Modal>

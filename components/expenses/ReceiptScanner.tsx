@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { ScanReceiptResult } from "@/types";
 import { scanReceiptApi } from "@/lib/services/expenses.service";
 import Spinner from "@/components/Spinner";
@@ -11,6 +12,7 @@ interface ReceiptScannerProps {
 }
 
 export default function ReceiptScanner({ groupId, onResult }: ReceiptScannerProps) {
+  const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const [scanning, setScanning] = useState(false);
@@ -23,7 +25,7 @@ export default function ReceiptScanner({ groupId, onResult }: ReceiptScannerProp
 
   async function handleFile(file: File) {
     if (!file.type.startsWith("image/")) {
-      setError("Please select an image file.");
+      setError(t("receiptScanner.errorFileType"));
       return;
     }
     setError("");
@@ -32,7 +34,7 @@ export default function ReceiptScanner({ groupId, onResult }: ReceiptScannerProp
       const result = await scanReceiptApi(groupId, file);
       onResult(result);
     } catch {
-      setError("Could not scan receipt. Please try again or fill in manually.");
+      setError(t("receiptScanner.errorScanFailed"));
     } finally {
       setScanning(false);
     }
@@ -60,7 +62,7 @@ export default function ReceiptScanner({ groupId, onResult }: ReceiptScannerProp
         {scanning ? (
           <div className="flex flex-col items-center gap-2 py-2">
             <Spinner size="md" className="text-indigo-500" />
-            <p className="text-sm text-indigo-600 font-medium">Scanning receipt with AI…</p>
+            <p className="text-sm text-indigo-600 font-medium">{t("receiptScanner.scanning")}</p>
           </div>
         ) : (
           <>
@@ -71,15 +73,15 @@ export default function ReceiptScanner({ groupId, onResult }: ReceiptScannerProp
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
-            <p className="text-sm font-medium text-gray-700 mb-1">Scan receipt with AI</p>
-            <p className="text-xs text-gray-400 mb-3">Auto-fills description, amount & currency</p>
+            <p className="text-sm font-medium text-gray-700 mb-1">{t("receiptScanner.title")}</p>
+            <p className="text-xs text-gray-400 mb-3">{t("receiptScanner.subtitle")}</p>
             <div className="flex items-center justify-center gap-2">
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 className="text-xs bg-white border border-gray-200 rounded-lg px-3 py-1.5 font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
-                Upload image
+                {t("receiptScanner.uploadImage")}
               </button>
               {isMobile && (
                 <button
@@ -87,7 +89,7 @@ export default function ReceiptScanner({ groupId, onResult }: ReceiptScannerProp
                   onClick={() => cameraInputRef.current?.click()}
                   className="text-xs bg-indigo-600 text-white rounded-lg px-3 py-1.5 font-medium hover:bg-indigo-700 transition-colors"
                 >
-                  Use camera
+                  {t("receiptScanner.useCamera")}
                 </button>
               )}
             </div>

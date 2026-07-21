@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BalancesResponse, SimplifiedTransaction } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
 import Card from "@/components/Card";
@@ -18,6 +19,7 @@ interface BalancesCardProps {
 }
 
 export default function BalancesCard({ balances, groupId, groupName, baseCurrency, onSettled }: BalancesCardProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [settleTarget, setSettleTarget] = useState<SimplifiedTransaction | null>(null);
   const [reminding, setReminding] = useState(false);
@@ -29,14 +31,19 @@ export default function BalancesCard({ balances, groupId, groupName, baseCurrenc
       const { sent } = await sendRemindersApi(groupId);
       setReminderSent(true);
       setTimeout(() => setReminderSent(false), 3000);
-      if (sent === 0) alert("No outstanding debtors to remind.");
+      if (sent === 0) alert(t("balances.noOutstandingDebtors"));
     } finally {
       setReminding(false);
     }
   }
 
   function whatsappNudge(tx: SimplifiedTransaction) {
-    const text = `Hi ${tx.fromName}, just a reminder that you owe me ${baseCurrency} ${tx.amount.toFixed(2)} in "${groupName}" on Squarr.`;
+    const text = t("balances.whatsappMessage", {
+      name: tx.fromName,
+      currency: baseCurrency,
+      amount: tx.amount.toFixed(2),
+      group: groupName,
+    });
     const phone = tx.fromPhone?.replace(/\D/g, "");
     const url = phone
       ? `https://wa.me/${phone}?text=${encodeURIComponent(text)}`
@@ -53,7 +60,7 @@ export default function BalancesCard({ balances, groupId, groupName, baseCurrenc
       <Card padding="md">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-            Balances
+            {t("balances.heading")}
           </h2>
           {!allSquare && (
             <Button
@@ -62,7 +69,7 @@ export default function BalancesCard({ balances, groupId, groupName, baseCurrenc
               onClick={handleSendReminders}
               loading={reminding}
             >
-              {reminderSent ? "Reminders sent!" : "Send reminders"}
+              {reminderSent ? t("balances.remindersSent") : t("balances.sendReminders")}
             </Button>
           )}
         </div>
@@ -78,10 +85,10 @@ export default function BalancesCard({ balances, groupId, groupName, baseCurrenc
             return (
               <div key={b.userId} className="flex items-center justify-between gap-2">
                 <span className="text-sm text-gray-700">
-                  {isMe ? "You" : name}
+                  {isMe ? t("balances.you") : name}
                 </span>
                 {Math.abs(b.amount) < 0.005 ? (
-                  <Badge color="green">Settled up</Badge>
+                  <Badge color="green">{t("balances.settledUp")}</Badge>
                 ) : (
                   <span
                     className={`text-sm font-semibold ${isOwed ? "text-green-600" : "text-red-600"}`}
@@ -97,12 +104,12 @@ export default function BalancesCard({ balances, groupId, groupName, baseCurrenc
         {/* Simplified transactions */}
         {allSquare ? (
           <div className="text-center py-3 bg-green-50 rounded-xl">
-            <p className="text-sm font-medium text-green-700">Everyone is settled up!</p>
+            <p className="text-sm font-medium text-green-700">{t("balances.everyoneSettled")}</p>
           </div>
         ) : (
           <div className="space-y-2">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
-              Suggested payments
+              {t("balances.suggestedPayments")}
             </p>
             {simplifiedTransactions.map((tx, i) => {
               const isMyDebt = tx.fromUserId === user?.id;
@@ -113,11 +120,11 @@ export default function BalancesCard({ balances, groupId, groupName, baseCurrenc
                 >
                   <p className="text-sm text-gray-700">
                     <span className="font-medium">
-                      {isMyDebt ? "You" : tx.fromName}
+                      {isMyDebt ? t("balances.you") : tx.fromName}
                     </span>
-                    {" → "}
+                    <span className="rtl:inline-block rtl:rotate-180"> → </span>
                     <span className="font-medium">
-                      {tx.toUserId === user?.id ? "you" : tx.toName}
+                      {tx.toUserId === user?.id ? t("settlementItem.youLower") : tx.toName}
                     </span>
                   </p>
                   <div className="flex items-center gap-2 flex-shrink-0">
@@ -126,13 +133,13 @@ export default function BalancesCard({ balances, groupId, groupName, baseCurrenc
                     </span>
                     {isMyDebt && (
                       <Button size="sm" onClick={() => setSettleTarget(tx)}>
-                        Pay
+                        {t("balances.pay")}
                       </Button>
                     )}
                     {tx.toUserId === user?.id && (
                       <button
                         onClick={() => whatsappNudge(tx)}
-                        title="Remind via WhatsApp"
+                        title={t("balances.remindViaWhatsapp")}
                         className="p-1.5 rounded-lg text-green-500 hover:bg-green-50 transition-colors"
                       >
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">

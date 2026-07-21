@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import Modal from "@/components/Modal";
 import Button from "@/components/Button";
 
@@ -17,20 +18,21 @@ export default function ConfirmModal({
   open,
   onClose,
   onConfirm,
-  title = "Are you sure?",
+  title,
   message,
-  confirmLabel = "Confirm",
+  confirmLabel,
   loading = false,
 }: ConfirmModalProps) {
+  const { t } = useTranslation();
   return (
-    <Modal open={open} onClose={onClose} title={title}>
+    <Modal open={open} onClose={onClose} title={title ?? t("common.confirm")}>
       {message && <p className="text-sm text-gray-600 mb-6">{message}</p>}
       <div className="flex gap-3">
         <Button variant="secondary" onClick={onClose} className="flex-1">
-          Cancel
+          {t("common.cancel")}
         </Button>
         <Button variant="danger" onClick={onConfirm} loading={loading} className="flex-1">
-          {confirmLabel}
+          {confirmLabel ?? t("common.confirm")}
         </Button>
       </div>
     </Modal>
