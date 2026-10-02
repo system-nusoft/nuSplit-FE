@@ -313,5 +313,25 @@
   },
   "phoneInput": {
     "hint": "请输入不带开头 0 的号码 —— 例如 3001234567 而非 03001234567"
+  },
+  "premium": {
+    "sectionHeading": "套餐与账单",
+    "free": "免费版",
+    "premium": "高级版",
+    "freeDesc": "1 个群组 · 无付款提醒",
+    "premiumDesc": "无限群组 · WhatsApp 与邮件提醒",
+    "upgradeButton": "升级到高级版",
+    "manageButton": "管理订阅",
+    "upgradeError": "无法启动结账，请重试。",
+    "portalError": "无法打开账单管理页面，请重试。",
+    "renewsOn": "将于 {{date}} 续订",
+    "endsOn": "可使用至 {{date}}",
+    "upsellTitle": "高级版功能",
+    "upsellGroupsBody": "免费版包含 1 个群组。升级到高级版可创建无限群组。",
+    "upsellRemindersBody": "付款提醒是高级版功能。升级后可发送 WhatsApp 和邮件提醒。",
+    "upsellCta": "升级到高级版",
+    "maybeLater": "以后再说",
+    "perkGroups": "无限群组",
+    "perkReminders": "WhatsApp 与邮件付款提醒"
   }
 }

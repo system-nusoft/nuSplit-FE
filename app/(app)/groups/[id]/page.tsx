@@ -14,6 +14,7 @@ import ExpenseComments from "@/components/expenses/ExpenseComments";
 import MemberAvatarStack from "@/components/groups/MemberAvatarStack";
 import BalancesCard from "@/components/groups/BalancesCard";
 import GroupSettingsModal from "@/components/groups/GroupSettingsModal";
+import PremiumUpsellModal from "@/components/PremiumUpsellModal";
 import ConfirmModal from "@/components/ConfirmModal";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
@@ -44,6 +45,7 @@ export default function GroupDetailPage() {
   const [group, setGroup] = useState<GroupDetail | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [showRemindUpsell, setShowRemindUpsell] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [expenses, setExpenses] = useState<PaginatedResponse<Expense> | null>(null);
@@ -102,6 +104,10 @@ export default function GroupDetailPage() {
   }
 
   async function handleRemindExpense(expenseId: string) {
+    if (!user?.isPremium) {
+      setShowRemindUpsell(true);
+      return;
+    }
     try {
       const { sent } = await sendExpenseReminderApi(id, expenseId);
       alert(sent > 0 ? t("groupDetail.reminderSent", { count: sent }) : t("groupDetail.noRemindersToSend"));
@@ -405,6 +411,12 @@ export default function GroupDetailPage() {
           </Button>
         </div>
       </Modal>
+
+      <PremiumUpsellModal
+        open={showRemindUpsell}
+        onClose={() => setShowRemindUpsell(false)}
+        bodyKey="premium.upsellRemindersBody"
+      />
     </div>
   );
 }

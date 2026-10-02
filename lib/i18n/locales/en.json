@@ -334,5 +334,25 @@
   },
   "phoneInput": {
     "hint": "Enter number without leading zero — e.g. 3001234567 not 03001234567"
+  },
+  "premium": {
+    "sectionHeading": "Plan & billing",
+    "free": "Free",
+    "premium": "Premium",
+    "freeDesc": "1 group · no payment reminders",
+    "premiumDesc": "Unlimited groups · WhatsApp & email reminders",
+    "upgradeButton": "Upgrade to Premium",
+    "manageButton": "Manage subscription",
+    "upgradeError": "Couldn't start checkout. Please try again.",
+    "portalError": "Couldn't open the billing portal. Please try again.",
+    "renewsOn": "Renews on {{date}}",
+    "endsOn": "Access until {{date}}",
+    "upsellTitle": "Premium feature",
+    "upsellGroupsBody": "The free plan includes 1 group. Upgrade to Premium for unlimited groups.",
+    "upsellRemindersBody": "Payment reminders are a Premium feature. Upgrade to send WhatsApp and email nudges.",
+    "upsellCta": "Upgrade to Premium",
+    "maybeLater": "Maybe later",
+    "perkGroups": "Unlimited groups",
+    "perkReminders": "WhatsApp & email payment reminders"
   }
 }

@@ -8,6 +8,7 @@ import Card from "@/components/Card";
 import Badge from "@/components/Badge";
 import Button from "@/components/Button";
 import SettleUpModal from "./SettleUpModal";
+import PremiumUpsellModal from "@/components/PremiumUpsellModal";
 import { sendRemindersApi } from "@/lib/services/groups.service";
 
 interface BalancesCardProps {
@@ -24,8 +25,15 @@ export default function BalancesCard({ balances, groupId, groupName, baseCurrenc
   const [settleTarget, setSettleTarget] = useState<SimplifiedTransaction | null>(null);
   const [reminding, setReminding] = useState(false);
   const [reminderSent, setReminderSent] = useState(false);
+  const [showUpsell, setShowUpsell] = useState(false);
+
+  const isPremium = !!user?.isPremium;
 
   async function handleSendReminders() {
+    if (!isPremium) {
+      setShowUpsell(true);
+      return;
+    }
     setReminding(true);
     try {
       const { sent } = await sendRemindersApi(groupId);
@@ -38,6 +46,10 @@ export default function BalancesCard({ balances, groupId, groupName, baseCurrenc
   }
 
   function whatsappNudge(tx: SimplifiedTransaction) {
+    if (!isPremium) {
+      setShowUpsell(true);
+      return;
+    }
     const text = t("balances.whatsappMessage", {
       name: tx.fromName,
       currency: baseCurrency,
@@ -69,6 +81,12 @@ export default function BalancesCard({ balances, groupId, groupName, baseCurrenc
               onClick={handleSendReminders}
               loading={reminding}
             >
+              {!isPremium && (
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              )}
               {reminderSent ? t("balances.remindersSent") : t("balances.sendReminders")}
             </Button>
           )}
@@ -154,6 +172,12 @@ export default function BalancesCard({ balances, groupId, groupName, baseCurrenc
           </div>
         )}
       </Card>
+
+      <PremiumUpsellModal
+        open={showUpsell}
+        onClose={() => setShowUpsell(false)}
+        bodyKey="premium.upsellRemindersBody"
+      />
 
       {settleTarget && (
         <SettleUpModal

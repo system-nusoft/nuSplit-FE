@@ -4,8 +4,10 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Group } from "@/types";
 import { getGroupsApi, getBalanceOverviewApi } from "@/lib/services/groups.service";
+import { useAuth } from "@/contexts/AuthContext";
 import GroupCard from "@/components/groups/GroupCard";
 import CreateGroupModal from "@/components/groups/CreateGroupModal";
+import PremiumUpsellModal from "@/components/PremiumUpsellModal";
 import Button from "@/components/Button";
 import Spinner from "@/components/Spinner";
 
@@ -16,10 +18,20 @@ interface BalanceOverview {
 
 export default function GroupsPage() {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [groups, setGroups] = useState<Group[]>([]);
   const [overview, setOverview] = useState<BalanceOverview | null>(null);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
+  const [showUpsell, setShowUpsell] = useState(false);
+
+  const groupsCreatedByMe = groups.filter((g) => g.createdById === user?.id).length;
+  const atFreeGroupLimit = !user?.isPremium && groupsCreatedByMe >= 1;
+
+  function handleNewGroup() {
+    if (atFreeGroupLimit) setShowUpsell(true);
+    else setShowCreate(true);
+  }
 
   useEffect(() => {
     Promise.all([getGroupsApi(), getBalanceOverviewApi()])
@@ -77,7 +89,7 @@ export default function GroupsPage() {
           <h2 className="text-lg font-semibold text-gray-900">
             {t("groups.myGroupsHeading")}{!loading && groups.length > 0 && ` · ${groups.length}`}
           </h2>
-          <Button onClick={() => setShowCreate(true)} size="sm">
+          <Button onClick={handleNewGroup} size="sm">
             {t("groups.newGroup")}
           </Button>
         </div>
@@ -95,7 +107,7 @@ export default function GroupsPage() {
             <p className="text-gray-500 text-sm mb-6">
               {t("groups.emptySubtitle")}
             </p>
-            <Button onClick={() => setShowCreate(true)}>{t("groups.createFirstGroup")}</Button>
+            <Button onClick={handleNewGroup}>{t("groups.createFirstGroup")}</Button>
           </div>
         ) : (
           <div className="flex flex-col gap-4">
@@ -110,6 +122,12 @@ export default function GroupsPage() {
         open={showCreate}
         onClose={() => setShowCreate(false)}
         onCreated={handleGroupCreated}
+      />
+
+      <PremiumUpsellModal
+        open={showUpsell}
+        onClose={() => setShowUpsell(false)}
+        bodyKey="premium.upsellGroupsBody"
       />
     </div>
   );
