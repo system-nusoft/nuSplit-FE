@@ -313,5 +313,25 @@
   },
   "phoneInput": {
     "hint": "Introduce el número sin el cero inicial — ej. 3001234567 no 03001234567"
+  },
+  "premium": {
+    "sectionHeading": "Plan y facturación",
+    "free": "Gratis",
+    "premium": "Premium",
+    "freeDesc": "1 grupo · sin recordatorios de pago",
+    "premiumDesc": "Grupos ilimitados · recordatorios por WhatsApp y correo",
+    "upgradeButton": "Pasar a Premium",
+    "manageButton": "Gestionar suscripción",
+    "upgradeError": "No se pudo iniciar el pago. Inténtalo de nuevo.",
+    "portalError": "No se pudo abrir el portal de facturación. Inténtalo de nuevo.",
+    "renewsOn": "Se renueva el {{date}}",
+    "endsOn": "Acceso hasta el {{date}}",
+    "upsellTitle": "Función Premium",
+    "upsellGroupsBody": "El plan gratuito incluye 1 grupo. Pasa a Premium para tener grupos ilimitados.",
+    "upsellRemindersBody": "Los recordatorios de pago son una función Premium. Pasa a Premium para enviar avisos por WhatsApp y correo.",
+    "upsellCta": "Pasar a Premium",
+    "maybeLater": "Quizás más tarde",
+    "perkGroups": "Grupos ilimitados",
+    "perkReminders": "Recordatorios de pago por WhatsApp y correo"
   }
 }

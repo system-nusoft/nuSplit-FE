@@ -4,6 +4,9 @@ export interface User {
   name?: string;
   phoneNumber?: string;
   isVerified: boolean;
+  isPremium?: boolean;
+  subscriptionStatus?: string | null;
+  subscriptionCurrentPeriodEnd?: string | null;
   createdAt: string;
 }
 

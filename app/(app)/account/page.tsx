@@ -1,9 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useAuth, updateMeApi } from "@/contexts/AuthContext";
+import { getMeApi } from "@/lib/services/auth.service";
+import {
+  createCheckoutSessionApi,
+  createPortalSessionApi,
+} from "@/lib/services/billing.service";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
@@ -20,6 +25,53 @@ export default function AccountPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  const [billingLoading, setBillingLoading] = useState(false);
+  const [billingError, setBillingError] = useState("");
+
+  const isPremium = !!user?.isPremium;
+
+  // Returning from Stripe Checkout — refetch the user so isPremium reflects the new subscription.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (new URLSearchParams(window.location.search).get("upgraded") !== "true") return;
+    getMeApi()
+      .then((me) => updateUser(me))
+      .catch(() => {});
+    window.history.replaceState({}, "", "/account");
+  }, [updateUser]);
+
+  async function handleUpgrade() {
+    setBillingLoading(true);
+    setBillingError("");
+    try {
+      const { url } = await createCheckoutSessionApi();
+      window.location.href = url;
+    } catch {
+      setBillingError(t("premium.upgradeError"));
+      setBillingLoading(false);
+    }
+  }
+
+  async function handleManageSubscription() {
+    setBillingLoading(true);
+    setBillingError("");
+    try {
+      const { url } = await createPortalSessionApi();
+      window.location.href = url;
+    } catch {
+      setBillingError(t("premium.portalError"));
+      setBillingLoading(false);
+    }
+  }
+
+  const renewalDate = user?.subscriptionCurrentPeriodEnd
+    ? new Date(user.subscriptionCurrentPeriodEnd).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : null;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -105,6 +157,48 @@ export default function AccountPage() {
         <Card padding="lg">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">{t("account.language")}</h2>
           <LanguageDropdown />
+        </Card>
+
+        {/* Plan & billing */}
+        <Card padding="lg">
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">{t("premium.sectionHeading")}</h2>
+
+          <div className="flex items-start justify-between gap-3 mb-4">
+            <div>
+              <p className="text-base font-semibold text-gray-900">
+                {isPremium ? t("premium.premium") : t("premium.free")}
+              </p>
+              <p className="text-sm text-gray-500 mt-0.5">
+                {isPremium ? t("premium.premiumDesc") : t("premium.freeDesc")}
+              </p>
+              {isPremium && renewalDate && (
+                <p className="text-xs text-gray-400 mt-1">
+                  {user?.subscriptionStatus === "canceled"
+                    ? t("premium.endsOn", { date: renewalDate })
+                    : t("premium.renewsOn", { date: renewalDate })}
+                </p>
+              )}
+            </div>
+            <span
+              className={`text-xs font-semibold px-2.5 py-1 rounded-full flex-shrink-0 ${
+                isPremium ? "bg-indigo-100 text-indigo-700" : "bg-gray-100 text-gray-500"
+              }`}
+            >
+              {isPremium ? t("premium.premium") : t("premium.free")}
+            </span>
+          </div>
+
+          {billingError && <p className="text-sm text-red-500 mb-3">{billingError}</p>}
+
+          {isPremium ? (
+            <Button variant="secondary" loading={billingLoading} onClick={handleManageSubscription}>
+              {t("premium.manageButton")}
+            </Button>
+          ) : (
+            <Button loading={billingLoading} onClick={handleUpgrade}>
+              {t("premium.upgradeButton")}
+            </Button>
+          )}
         </Card>
 
         {/* Danger zone */}

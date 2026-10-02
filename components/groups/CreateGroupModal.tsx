@@ -7,6 +7,7 @@ import Input from "@/components/Input";
 import Button from "@/components/Button";
 import CurrencySelect from "@/components/CurrencySelect";
 import { createGroupApi } from "@/lib/services/groups.service";
+import { isPremiumRequiredError } from "@/lib/services/billing.service";
 import { Group } from "@/types";
 
 const EMOJIS = ["🍕", "🍺", "🏖️", "🏠", "✈️", "🎉", "🎮", "🏋️", "🚗", "🎸"];
@@ -42,8 +43,12 @@ export default function CreateGroupModal({ open, onClose, onCreated }: CreateGro
       setEmoji("");
       setColor(COLORS[0]);
       setBaseCurrency("USD");
-    } catch {
-      setError(t("createGroup.errorCreate"));
+    } catch (err) {
+      setError(
+        isPremiumRequiredError(err)
+          ? t("premium.upsellGroupsBody")
+          : t("createGroup.errorCreate"),
+      );
     } finally {
       setLoading(false);
     }

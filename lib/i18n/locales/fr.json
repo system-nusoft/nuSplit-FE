@@ -313,5 +313,25 @@
   },
   "phoneInput": {
     "hint": "Entrez le numéro sans le zéro initial — ex. 3001234567 et non 03001234567"
+  },
+  "premium": {
+    "sectionHeading": "Forfait et facturation",
+    "free": "Gratuit",
+    "premium": "Premium",
+    "freeDesc": "1 groupe · aucun rappel de paiement",
+    "premiumDesc": "Groupes illimités · rappels WhatsApp et e-mail",
+    "upgradeButton": "Passer à Premium",
+    "manageButton": "Gérer l'abonnement",
+    "upgradeError": "Impossible de démarrer le paiement. Veuillez réessayer.",
+    "portalError": "Impossible d'ouvrir le portail de facturation. Veuillez réessayer.",
+    "renewsOn": "Renouvellement le {{date}}",
+    "endsOn": "Accès jusqu'au {{date}}",
+    "upsellTitle": "Fonctionnalité Premium",
+    "upsellGroupsBody": "Le forfait gratuit comprend 1 groupe. Passez à Premium pour des groupes illimités.",
+    "upsellRemindersBody": "Les rappels de paiement sont une fonctionnalité Premium. Passez à Premium pour envoyer des rappels WhatsApp et e-mail.",
+    "upsellCta": "Passer à Premium",
+    "maybeLater": "Plus tard",
+    "perkGroups": "Groupes illimités",
+    "perkReminders": "Rappels de paiement WhatsApp et e-mail"
   }
 }
